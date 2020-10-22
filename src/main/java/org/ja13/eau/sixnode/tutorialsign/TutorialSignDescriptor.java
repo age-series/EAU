@@ -1,0 +1,86 @@
+package org.ja13.eau.sixnode.tutorialsign;
+
+import org.ja13.eau.misc.Obj3D;
+import org.ja13.eau.misc.Obj3D.Obj3DPart;
+import org.ja13.eau.misc.UtilsClient;
+import org.ja13.eau.misc.VoltageTier;
+import org.ja13.eau.node.six.SixNodeDescriptor;
+import net.minecraft.item.ItemStack;
+import org.ja13.eau.misc.Obj3D;
+import org.ja13.eau.misc.UtilsClient;
+import org.ja13.eau.misc.VoltageTier;
+import org.ja13.eau.node.six.SixNodeDescriptor;
+import org.lwjgl.opengl.GL11;
+
+public class TutorialSignDescriptor extends SixNodeDescriptor {
+
+    private final Obj3D obj;
+    private Obj3D.Obj3DPart main, light, halo;
+
+    public TutorialSignDescriptor(String name, Obj3D obj) {
+        super(name, TutorialSignElement.class, TutorialSignRender.class);
+        this.obj = obj;
+        if (obj != null) {
+            main = obj.getPart("main");
+            light = obj.getPart("light");
+            halo = obj.getPart("halo");
+        }
+
+        voltageTier = VoltageTier.NEUTRAL;
+    }
+
+    void setupColor(float factor, float alpha) {
+        if (factor < 0.5) {
+            factor *= 2;
+            float factorN = 1f - factor;
+            GL11.glColor4f(0, 0, 0.4f * factorN, alpha);
+        } else {
+            factor = (factor - 0.5f) * 2;
+            float factorN = 1f - factor;
+            GL11.glColor4f(0, 1 * factor, 0, alpha);
+        }
+    }
+
+    void draw(float factor) {
+        //GL11.glColor3f(0.8f, 0.8f, 0.8f);
+        if (main != null) main.draw();
+        UtilsClient.disableLight();
+
+        setupColor(factor, 1);
+        if (light != null) {
+            light.draw();
+        }
+
+        UtilsClient.enableBlend();
+        setupColor(factor, 0.4f);
+        if (halo != null) halo.draw();
+
+        UtilsClient.disableBlend();
+        UtilsClient.enableLight();
+        GL11.glColor3f(1f, 1f, 1f);
+    }
+
+    @Override
+    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
+        return type != ItemRenderType.INVENTORY;
+    }
+
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+        return true;
+    }
+
+    @Override
+    public boolean shouldUseRenderHelperEln(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
+        return type != ItemRenderType.INVENTORY;
+    }
+
+    @Override
+    public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+        if (type == ItemRenderType.INVENTORY) {
+			super.renderItem(type, item, data);
+		} else {
+            draw(1f);
+        }
+    }
+}

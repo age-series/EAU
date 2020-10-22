@@ -1,0 +1,4 @@
+s tOn SconceLampOn.png
+s tOff SconceLampOff.png
+s type lampDraw
+s cable enable

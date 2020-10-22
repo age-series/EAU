@@ -1,0 +1,202 @@
+package org.ja13.eau.transparentnode.autominer;
+
+import org.ja13.eau.misc.*;
+import org.ja13.eau.misc.Obj3D.Obj3DPart;
+import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
+import org.ja13.eau.sim.ElectricalLoad;
+import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import org.ja13.eau.i18n.I18N;
+import org.ja13.eau.misc.Coordonate;
+import org.ja13.eau.misc.Obj3D;
+import org.ja13.eau.misc.Utils;
+import org.ja13.eau.misc.UtilsClient;
+import org.ja13.eau.misc.VoltageTier;
+import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
+import org.ja13.eau.sim.ElectricalLoad;
+import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.ja13.eau.i18n.I18N.tr;
+
+public class AutoMinerDescriptor extends TransparentNodeDescriptor {
+    private final Coordonate[] powerCoord;
+    final Coordonate lightCoord;
+    private final Obj3D.Obj3DPart core;
+    private final Obj3D.Obj3DPart gui;
+    private final Obj3D.Obj3DPart lampSocket;
+    private final Obj3D.Obj3DPart lampOff;
+    private final Obj3D.Obj3DPart lampOn;
+    public final Obj3D.Obj3DPart head;
+    public final Obj3D.Obj3DPart pipe;
+    private final Obj3D.Obj3DPart buttonFixed;
+    private final Obj3D.Obj3DPart[] buttons;
+    private final Obj3D.Obj3DPart[] ledsA;
+    private final Obj3D.Obj3DPart[] ledsP;
+    private final float[] buttonsStateDefault;
+    private final boolean[] ledsAStateDefault;
+    private final boolean[] ledsPStateDefault;
+    final int buttonsCount = 5;
+    final int ledsACount = 11;
+    final int ledsPCount = 8;
+    private final int deltaX;
+    private final int deltaY;
+    private final int deltaZ;
+    private final GenericCableDescriptor cable;
+
+    final double nominalVoltage;
+    final double pipeOperationEnergy;
+    private final double pipeOperationPower;
+
+    final double pipeOperationRp;
+
+    public AutoMinerDescriptor(String name, Obj3D obj, Coordonate[] powerCoord, Coordonate lightCoord,
+                               Coordonate miningCoord, int deltaX, int deltaY, int deltaZ,
+                               GenericCableDescriptor cable, double pipeOperationTime, double pipeOperationEnergy) {
+        super(name, AutoMinerElement.class, AutoMinerRender.class);
+        this.nominalVoltage = 480.0;
+        this.pipeOperationEnergy = pipeOperationEnergy;
+        pipeOperationPower = pipeOperationEnergy / pipeOperationTime;
+        pipeOperationRp = nominalVoltage * nominalVoltage / pipeOperationPower;
+        this.cable = cable;
+
+        this.powerCoord = powerCoord;
+        this.lightCoord = lightCoord;
+
+        this.deltaX = deltaX;
+        this.deltaY = deltaY;
+        this.deltaZ = deltaZ;
+
+        core = obj.getPart("AutominerCore");
+        gui = obj.getPart("AutominerGUI");
+        lampSocket = obj.getPart("LampSocket");
+        lampOff = obj.getPart("LampOff");
+        lampOn = obj.getPart("LampOn");
+        head = obj.getPart("MinerHead");
+        pipe = obj.getPart("MinerPipe");
+
+        buttonFixed = obj.getPart("ButtonsFixed");
+
+        buttons = new Obj3D.Obj3DPart[buttonsCount];
+        buttonsStateDefault = new float[buttonsCount];
+        for (int idx = 0; idx < buttonsCount; idx++) {
+            buttons[idx] = obj.getPart("Button" + idx);
+            buttonsStateDefault[idx] = (float) Math.random();
+        }
+
+        ledsA = new Obj3D.Obj3DPart[ledsACount];
+        ledsAStateDefault = new boolean[ledsACount];
+        for (int idx = 0; idx < ledsACount; idx++) {
+            ledsA[idx] = obj.getPart("ledA" + idx);
+            ledsAStateDefault[idx] = Math.random() > 0.5;
+        }
+
+        ledsP = new Obj3D.Obj3DPart[ledsPCount];
+        ledsPStateDefault = new boolean[ledsPCount];
+        for (int idx = 0; idx < ledsPCount; idx++) {
+            ledsP[idx] = obj.getPart("ledP" + idx);
+            ledsPStateDefault[idx] = Math.random() > 0.5;
+        }
+
+        voltageTier = VoltageTier.INDUSTRIAL;
+    }
+
+    public void applyTo(ElectricalLoad load) {
+        cable.applyTo(load);
+    }
+
+    @Override
+    public boolean mustHaveFloor() {
+        return false;
+    }
+
+    @Override
+    public void addInfo(@NotNull ItemStack itemStack, @NotNull EntityPlayer entityPlayer, @NotNull List list) {
+        super.addInfo(itemStack, entityPlayer, list);
+        Collections.addAll(list, I18N.tr("Excavates on a small radius.\nExtracts ore on a bigger radius:\n10 blocks radius after 10 blocks depth.").split("\n"));
+        list.add(I18N.tr("Nominal voltage: %1$V", Utils.plotValue(nominalVoltage)));
+    }
+
+    void draw(boolean lampState, float[] buttonsState, boolean[] ledsAState, boolean[] ledsPState) {
+        GL11.glRotatef(-90, 0, 1, 0);
+        GL11.glTranslatef(0, -1.5f, 0);
+
+        for (int idx = 0; idx < buttonsCount; idx++) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(0, (1 - buttonsState[idx]) * 0.01f, 0);
+            if (buttons[idx] != null) buttons[idx].draw();
+            GL11.glPopMatrix();
+        }
+
+        UtilsClient.disableLight();
+        for (int idx = 0; idx < ledsACount; idx++) {
+            GL11.glColor3f(0, ledsAState[idx] ? 0 : 1, 0);
+            if (ledsA[idx] != null) ledsA[idx].draw();
+        }
+
+        for (int idx = 0; idx < ledsPCount; idx++) {
+            GL11.glColor3f(0, ledsPState[idx] ? 0 : 1, 0);
+            if (ledsP[idx] != null) ledsP[idx].draw();
+        }
+        UtilsClient.enableLight();
+        GL11.glColor3f(1, 1, 1);
+
+        UtilsClient.disableCulling();
+        core.draw();
+        gui.draw();
+        buttonFixed.draw();
+        lampSocket.draw();
+        if (lampState)
+            lampOff.draw();
+        else
+            lampOn.draw();
+        UtilsClient.enableCulling();
+    }
+
+    @Override
+    public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+        if (type == ItemRenderType.INVENTORY) {
+            super.renderItem(type, item, data);
+        } else {
+            GL11.glScalef(0.18f, 0.18f, 0.18f);
+            draw(false, buttonsStateDefault, ledsAStateDefault, ledsPStateDefault);
+        }
+    }
+
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+        return true;
+    }
+
+    @Override
+    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
+        return type != ItemRenderType.INVENTORY;
+    }
+
+    public Coordonate[] getPowerCoordonate(World w) {
+        Coordonate[] temp = new Coordonate[powerCoord.length];
+        for (int idx = 0; idx < temp.length; idx++) {
+            temp[idx] = new Coordonate(powerCoord[idx]);
+            temp[idx].setDimension(w.provider.dimensionId);
+        }
+        return temp;
+    }
+
+    public int getSpawnDeltaX() {
+        return deltaX;
+    }
+
+    public int getSpawnDeltaY() {
+        return deltaY;
+    }
+
+    public int getSpawnDeltaZ() {
+        return deltaZ;
+    }
+}

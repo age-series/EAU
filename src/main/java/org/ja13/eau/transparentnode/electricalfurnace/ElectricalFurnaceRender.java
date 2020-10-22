@@ -1,0 +1,159 @@
+package org.ja13.eau.transparentnode.electricalfurnace;
+
+import org.ja13.eau.EAU;
+import org.ja13.eau.client.FrameTime;
+import org.ja13.eau.misc.Direction;
+import org.ja13.eau.misc.Utils;
+import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
+import org.ja13.eau.node.transparent.TransparentNodeElementInventory;
+import org.ja13.eau.node.transparent.TransparentNodeElementRender;
+import org.ja13.eau.node.transparent.TransparentNodeEntity;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import org.ja13.eau.EAU;
+import org.ja13.eau.client.FrameTime;
+import org.ja13.eau.misc.Direction;
+import org.ja13.eau.misc.Utils;
+import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
+import org.ja13.eau.node.transparent.TransparentNodeElementInventory;
+import org.ja13.eau.node.transparent.TransparentNodeElementRender;
+import org.ja13.eau.node.transparent.TransparentNodeEntity;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+public class ElectricalFurnaceRender extends TransparentNodeElementRender {
+
+    TransparentNodeElementInventory inventory = new ElectricalFurnaceInventory(5, 64, this);
+
+    public float temperature = 0;
+    public boolean powerOn, heatingCorpOn;
+    //float temperatureTarget;
+    EntityItem entityItemIn = null;
+
+    long time;
+
+    float processState, processStatePerSecond;
+
+    float counter = 0;
+
+    short heatingCorpResistorP = 0;
+
+    public boolean temperatureTargetSyncNew = false;
+    public float temperatureTargetSyncValue = -1234;
+
+    public boolean autoShutDown;
+
+    float voltage;
+
+    public ElectricalFurnaceRender(TransparentNodeEntity tileEntity, TransparentNodeDescriptor descriptor) {
+        super(tileEntity, descriptor);
+        time = System.currentTimeMillis();
+    }
+
+    @Override
+    public void draw() {
+        front.glRotateXnRef();
+
+        EAU.obj.draw("ElectricFurnace", "furnace");
+        //ClientProxy.obj.draw("ELFURNACE");
+
+        drawEntityItem(entityItemIn, -0.1, -0.20, 0, counter, 0.8f);
+    }
+
+
+    @Override
+    public void refresh(double deltaT) {
+        processState += processStatePerSecond * FrameTime.getNotCaped2();
+        if (processState > 1f) processState = 1f;
+        counter += (System.currentTimeMillis() - time) * 0.001 * 360 / 4;
+        if (counter > 360) counter -= 360;
+
+        time = System.currentTimeMillis();
+    }
+
+    @Override
+    public GuiScreen newGuiDraw(Direction side, EntityPlayer player) {
+        return new ElectricalFurnaceGuiDraw(player, inventory, this);
+    }
+
+    @Override
+    public void networkUnserialize(DataInputStream stream) {
+        super.networkUnserialize(stream);
+
+        short read;
+
+        try {
+            Byte b;
+
+            b = stream.readByte();
+
+            powerOn = (b & 1) != 0;
+            heatingCorpOn = (b & 2) != 0;
+
+            float temperatureTargetIncoming = stream.readShort();
+
+            if (temperatureTargetIncoming != temperatureTargetSyncValue) {
+                temperatureTargetSyncValue = temperatureTargetIncoming;
+                temperatureTargetSyncNew = true;
+            }
+
+            temperature = stream.readShort();
+
+            if ((read = stream.readShort()) == -1) {
+                entityItemIn = null;
+                stream.readShort();
+            } else {
+                entityItemIn = new EntityItem(tileEntity.getWorldObj(), tileEntity.xCoord + 0.5, tileEntity.yCoord + 0.5, tileEntity.zCoord + 1.2, Utils.newItemStack(read, 1, stream.readShort()));
+            }
+
+            heatingCorpResistorP = stream.readShort();
+            voltage = stream.readFloat();
+            processState = stream.readFloat();
+            processStatePerSecond = stream.readFloat();
+
+            autoShutDown = stream.readBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clientSetPowerOn(boolean value) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream stream = new DataOutputStream(bos);
+
+            preparePacketForServer(stream);
+
+            stream.writeByte(ElectricalFurnaceElement.unserializePowerOnId);
+            stream.writeByte(value ? 1 : 0);
+
+            sendPacketToServer(bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clientSetTemperatureTarget(float value) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream stream = new DataOutputStream(bos);
+
+            preparePacketForServer(stream);
+
+            stream.writeByte(ElectricalFurnaceElement.unserializeTemperatureTarget);
+            stream.writeFloat(value);
+
+            sendPacketToServer(bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean getPowerOn() {
+        return powerOn;
+    }
+}

@@ -1,0 +1,38 @@
+package org.ja13.eau.sixnode.wirelesssignal.aggregator;
+
+import org.ja13.eau.misc.INBTTReady;
+import org.ja13.eau.sixnode.wirelesssignal.IWirelessSignalTx;
+import net.minecraft.nbt.NBTTagCompound;
+import org.ja13.eau.misc.INBTTReady;
+import org.ja13.eau.sixnode.wirelesssignal.IWirelessSignalTx;
+
+import java.util.Collection;
+
+public class ToogleAggregator extends BiggerAggregator implements INBTTReady {
+
+    double oldValue = 1;
+
+    boolean state = false;
+
+    @Override
+    public double aggregate(Collection<IWirelessSignalTx> txs) {
+        double value = super.aggregate(txs);
+        if (value > 0.5 && oldValue <= 0.5) {
+            state = !state;
+        }
+        oldValue = value;
+        return state ? 1.0 : 0.0;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt, String str) {
+        state = nbt.getBoolean(str + "state");
+        oldValue = nbt.getDouble(str + "oldValue");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt, String str) {
+        nbt.setBoolean(str + "state", state);
+        nbt.setDouble(str + "oldValue", oldValue);
+    }
+}

@@ -1,0 +1,14 @@
+[
+    {
+        "modid":"Eln",
+        "version": "${version}",
+        "mcversion": "${mcversion}",
+        "name":"Electrical Age Unleashed",
+        "url":"http://eau.ja13.org/",
+		"credits": "The EAU Team",
+        "logoFile": "assets/eln/logo.png",
+        "requiredMods":[
+            "Forge"
+        ]
+    }
+]

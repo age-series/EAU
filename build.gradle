@@ -1,0 +1,243 @@
+buildscript {
+    ext.kotlin_version = '1.1.51'
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "https://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+  id 'com.matthewprenger.cursegradle' version '1.0.8'
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'forge'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+apply from: 'gradle.properties'
+
+group = GROUP
+archivesBaseName = ARCHIVE_NAME
+version = MAJORVERSION + "." + MINORVERSION + "." + REVISION
+
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java']
+        resources.srcDirs = ['src/main/resources']
+        resources.excludes = ['*']
+        kotlin.srcDirs = ['src/main/java']
+    }
+}
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    runDir = "run"
+
+    // TODO(Baughn): After moving to 1.10, this should be replaced with the shadow plugin,
+    // e.g. as used in https://github.com/Emberwalker/Laundarray/blob/master/build.gradle
+    srgExtra "PK: org/apache/commons/math3 mods/eln/libs/org/apache/commons/math3"
+    srgExtra "PK: kotlin mods/eln/libs/kotlin"
+    srgExtra "PK: org/jetbrains/annotations mods/eln/libs/annotations"
+
+    replaceIn "EAU.java"
+    replace "@VERSION@", project.version
+
+    replaceIn "Version.java"
+    replace "@VERSION@", project.version
+    replace "@MAJORVERSION@", MAJORVERSION
+    replace "@MINORVERSION@", MINORVERSION
+    replace "@REVISION@", REVISION
+
+    replace "@BUILD_HOST@", BUILD_HOST
+    replace "@BUILD_DATE@", BUILD_DATE
+    replace "@JAVA_VERSION@", JAVA_VERSION
+    replace "@GIT_REVISION@", GIT_REVISION
+}
+
+configurations {
+    external
+    compile.extendsFrom external
+    shade
+    compile.extendsFrom shade
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "codechicken"
+        url = "http://chickenbones.net/maven"
+    }
+    maven {
+        name = "mobiusstrip"
+        url = "http://default.mobiusstrip.eu/maven/"
+    }
+}
+
+dependencies {
+    external files("libs/commons-math3-3.3.jar")
+    shade "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+    shade "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "mcp.mobius.waila:Waila:1.5.11-RC2-NONEI_1.7.10:dev"
+}
+
+jar {
+    manifest {
+        attributes 'Built-By': 'EAU Team'
+        attributes 'Build-Date': new Date().format("yyyy-MM-dd HH:mm:ss")
+        attributes 'Built-JDK': System.getProperty('java.version')
+        attributes 'Implementation-Title': project.name
+        attributes 'Implementation-URL': 'https://github.com/jrddunbr/EAU'
+        attributes 'Implementation-Vendor': 'EAU Team'
+        attributes 'Implementation-Vendor-Id': 'org.ja13.eau'
+        attributes 'Project-Url': 'https://eau.ja13.org/'
+        attributes 'Source-Compatibility': project.sourceCompatibility
+        attributes 'Target-Compatibility': project.targetCompatibility
+    }
+
+    // Copy libs jar files
+    from { configurations.external.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude(['dan200/**', 'ic2/**', 'li/**', 'buildcraft/**'])
+
+    // Add README and LICENSE to the release jar
+    from(['README.md', 'LICENSE.md'])
+
+    // Asset whitelist to copy the required asset files into the release jar.
+    // Ignore files not used in Minecraft to reduce the release jar size.
+    // Copy main files
+    from('src/main/resources/assets/eau/') {
+        include 'logo.png'
+        include 'sounds.json'
+        into 'assets/eau/'
+    }
+
+    // Copy language files
+    from('src/main/resources/assets/eau/lang') {
+        include '*.lang'
+        into 'assets/eau/lang'
+    }
+
+    // Copy model
+    from('src/main/resources/assets/eau/model') {
+        exclude '_Common'
+        exclude '_TEMPLATES'
+        exclude 'export_*.png'
+        include '**/*.mtl'
+        include '**/*.obj'
+        include '**/*.txt'
+        include '**/*.png'
+        into 'assets/eau/model'
+    }
+
+    // Copy sounds
+    from('src/main/resources/assets/eau/sounds') {
+        include '*.ogg'
+        into 'assets/eau/sounds'
+    }
+
+    // Copy sprites
+    from('src/main/resources/assets/eau/sprites') {
+        include '**/*.png'
+        into 'assets/eau/sprites'
+    }
+
+    // Copy sprites
+    from('src/main/resources/assets/eau/textures') {
+        include '**/*.png'
+        into 'assets/eau/textures'
+    }
+    
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+}
+
+clean {
+    // Clean generated/built files. Saves are NOT deleted.
+    delete("${minecraft.runDir}/logs")
+    delete("${minecraft.runDir}/crash-reports")
+}
+
+def getMinecratfDir() {
+    String outDir = ""
+    final String osName = System.getProperty("os.name").toLowerCase()
+    if (osName.contains('windows'))
+        outDir = System.getenv("APPDATA") + "/.minecraft"
+    else if (osName.contains('os x'))
+        outDir = System.getProperty("user.home") + "/Library/Application Support/minecraft"
+    else if (osName.contains('linux'))
+        outDir = System.getProperty("user.home") + "/.minecraft"
+    return outDir
+}
+
+// Custom task to build and copy the mod Jar to the default local Minecraft folder
+task buildAndCopyJar(dependsOn: 'build', type: Copy) {
+    group = 'EAU'
+    description = 'Build and copy the mod Jar to the default local Minecraft folder.'
+
+    outputs.upToDateWhen { false } // Force to run this task
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE // Overwrite the file if exists
+
+    from("build/libs")
+    into(getMinecratfDir() + "/mods")
+    include("*.jar")
+}
+
+// Update the master language file
+task updateMasterLanguageFile(type: JavaExec, dependsOn: 'classes') {
+    group = 'EAU'
+    description = 'Generate or update the master language file.'
+
+    main = 'org.ja13.eau.i18n.LanguageFileUpdater'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['./src', './src/main/resources/assets/eau/lang/en_US.lang']
+}
+
+// Until this gets fixed, I'm disabling automatic language file updates.
+// It has been causing more harm in merge requests and other jank than good.
+// Please be pedantic about making further edits to the language file.
+// jar.dependsOn(updateMasterLanguageFile)
+
+publishing {
+    publications {
+        mod(MavenPublication) {
+            from components.java
+            groupId GROUP
+            artifactId ARCHIVE_NAME
+            version project.version
+        }
+    }
+}
+
+idea { module { inheritOutputDirs = true } }

@@ -1,0 +1,90 @@
+package org.ja13.eau.transparentnode.powercapacitor;
+
+import org.ja13.eau.item.DielectricItem;
+import org.ja13.eau.misc.Obj3D;
+import org.ja13.eau.misc.VoltageTier;
+import org.ja13.eau.misc.series.ISeriesMapping;
+import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import org.ja13.eau.item.DielectricItem;
+import org.ja13.eau.misc.Obj3D;
+import org.ja13.eau.misc.VoltageTier;
+import org.ja13.eau.misc.series.ISeriesMapping;
+import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
+
+public class PowerCapacitorDescriptor extends TransparentNodeDescriptor {
+
+    private final Obj3D obj;
+
+    public PowerCapacitorDescriptor(
+            String name,
+            Obj3D obj,
+            ISeriesMapping serie,
+            double dischargeTao
+
+    ) {
+        super(name, PowerCapacitorElement.class, PowerCapacitorRender.class);
+        this.serie = serie;
+        this.dischargeTao = dischargeTao;
+        this.obj = obj;
+        if (obj != null) {
+
+        }
+
+    }
+
+    ISeriesMapping serie;
+    public double dischargeTao;
+
+    public double getCValue(int cableCount, double nominalDielVoltage) {
+        if (cableCount == 0) return 0;
+        double uTemp = nominalDielVoltage / VoltageTier.LOW.getVoltage();
+        return serie.getValue(cableCount - 1) / uTemp / uTemp;
+    }
+
+    public double getCValue(IInventory inventory) {
+        ItemStack core = inventory.getStackInSlot(PowerCapacitorContainer.redId);
+        ItemStack diel = inventory.getStackInSlot(PowerCapacitorContainer.dielectricId);
+        if (core == null || diel == null)
+            return getCValue(0, 0);
+        else {
+            return getCValue(core.stackSize, getUNominalValue(inventory));
+        }
+    }
+
+    public double getUNominalValue(IInventory inventory) {
+        ItemStack diel = inventory.getStackInSlot(PowerCapacitorContainer.dielectricId);
+        if (diel == null)
+            return 10000;
+        else {
+            DielectricItem desc = (DielectricItem) DielectricItem.getDescriptor(diel);
+            return desc.uNominal * diel.stackSize;
+        }
+    }
+
+    public void setParent(net.minecraft.item.Item item, int damage) {
+        super.setParent(item, damage);
+        //Data.addEnergy(newItemStack());
+    }
+
+    void draw() {
+
+    }
+
+    @Override
+    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
+                                         ItemRendererHelper helper) {
+        return true;
+    }
+
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+        return true;
+    }
+
+    @Override
+    public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+        draw();
+    }
+}
