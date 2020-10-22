@@ -2,10 +2,6 @@
 
 EAU is a rewrite of Electrical Age, which is a Minecraft Mod offering the ability to perform large-scale in-game electrical simulations.
 
-**WARNING - GIT REVISION HISTORY SCRUB IMMINENT**
-
-This is to remove most of the old assets from the code to keep repository size small with the numerous new features being introduced.
-
 ## How to get started
 
 **EAU is Minecraft 1.7.10 compatible only. Forge is required.**
