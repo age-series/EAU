@@ -2,12 +2,6 @@ package org.ja13.eau.misc
 
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.relauncher.Side
-import org.ja13.eau.EAU
-import org.ja13.eau.generic.GenericItemBlockUsingDamage
-import org.ja13.eau.generic.GenericItemUsingDamage
-import org.ja13.eau.misc.Obj3D.Obj3DPart
-import org.ja13.eau.node.ITileEntitySpawnClient
-import org.ja13.eau.sim.PhysicalConstant
 import net.minecraft.block.Block
 import net.minecraft.client.Minecraft
 import net.minecraft.client.entity.EntityOtherPlayerMP
@@ -42,6 +36,9 @@ import net.minecraftforge.oredict.OreDictionary
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraftforge.oredict.ShapelessOreRecipe
 import org.apache.logging.log4j.LogManager
+import org.ja13.eau.EAU
+import org.ja13.eau.generic.GenericItemBlockUsingDamage
+import org.ja13.eau.misc.Obj3D.Obj3DPart
 import org.lwjgl.opengl.GL11
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
@@ -49,7 +46,7 @@ import java.io.DataOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.nio.charset.Charset
-import java.util.Random
+import java.util.*
 import kotlin.collections.ArrayList
 
 object Utils {
@@ -59,7 +56,8 @@ object Utils {
     const val burnTimeToEnergyFactor = 1.0
     const val voltageMageFactor = 0.1
 
-    val logger = LogManager.getLogger(org.ja13.eau.EAU.MODID)!!
+    @JvmStatic
+    val logger = LogManager.getLogger(EAU.MODID)!!
 
     @JvmStatic
     var uuid = 1
@@ -76,8 +74,8 @@ object Utils {
 
     @JvmStatic
     fun println(str: Any?) {
-        if (!org.ja13.eau.EAU.debugEnabled) return
-        logger.debug(str)
+        if (EAU.debugEnabled)
+            logger.info(str)
     }
 
     @JvmStatic

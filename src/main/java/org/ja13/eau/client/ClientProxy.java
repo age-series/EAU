@@ -2,14 +2,6 @@ package org.ja13.eau.client;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
-import org.ja13.eau.CommonProxy;
-import org.ja13.eau.EAU;
-import org.ja13.eau.node.six.SixNodeEntity;
-import org.ja13.eau.node.six.SixNodeRender;
-import org.ja13.eau.node.transparent.TransparentNodeEntity;
-import org.ja13.eau.node.transparent.TransparentNodeRender;
-import org.ja13.eau.sixnode.tutorialsign.TutorialSignOverlay;
-import org.ja13.eau.sound.SoundClientEventListener;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import org.ja13.eau.CommonProxy;
@@ -18,6 +10,7 @@ import org.ja13.eau.node.six.SixNodeEntity;
 import org.ja13.eau.node.six.SixNodeRender;
 import org.ja13.eau.node.transparent.TransparentNodeEntity;
 import org.ja13.eau.node.transparent.TransparentNodeRender;
+import org.ja13.eau.sixnode.tutorialsign.TutorialSignOverlay;
 import org.ja13.eau.sound.SoundClientEventListener;
 
 public class ClientProxy extends CommonProxy {
