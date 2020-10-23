@@ -7,9 +7,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import org.ja13.eau.EAU;
-import org.ja13.eau.misc.Color;
-import org.ja13.eau.misc.Version;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ChatComponentText;
@@ -114,8 +111,6 @@ public class VersionCheckerHandler {
                     final String error = "Unable to check the latest available version.";
                     System.err.println(error);
                     msg = Color.RED + "> " + error;
-
-                    e.printStackTrace();
                 }
 
                 // Ready. Display the message on the client chat.

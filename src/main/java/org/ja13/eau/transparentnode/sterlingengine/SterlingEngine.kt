@@ -1,10 +1,11 @@
 package org.ja13.eau.transparentnode.sterlingengine
 
-import org.ja13.eau.EAU
-import org.ja13.eau.cable.CableRender
+import net.minecraft.client.audio.ISound
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.ItemStack
+import net.minecraftforge.client.IItemRenderer
+import net.minecraftforge.client.IItemRenderer.ItemRenderType
 import org.ja13.eau.cable.CableRenderDescriptor
-import org.ja13.eau.cable.CableRenderType
-import org.ja13.eau.i18n.I18N
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.FunctionTable
 import org.ja13.eau.misc.LRDU
@@ -14,41 +15,21 @@ import org.ja13.eau.misc.SlewLimiter
 import org.ja13.eau.misc.Utils
 import org.ja13.eau.misc.Utils.setGlColorFromDye
 import org.ja13.eau.misc.VoltageTier
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.transparent.TransparentNode
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor
-import org.ja13.eau.node.transparent.TransparentNodeElement
-import org.ja13.eau.node.transparent.TransparentNodeElementRender
-import org.ja13.eau.node.transparent.TransparentNodeEntity
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.IProcess
-import org.ja13.eau.sim.PhysicalConstant
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.Resistor
-import org.ja13.eau.sim.mna.component.VoltageSource
-import org.ja13.eau.sim.mna.misc.IRootSystemPreStepProcess
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
-import org.ja13.eau.sim.nbt.NbtThermalLoad
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog
-import org.ja13.eau.sim.process.destruct.WorldExplosion
 import org.ja13.eau.sound.LoopedSound
-import net.minecraft.client.audio.ISound
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
-import net.minecraftforge.client.IItemRenderer
-import net.minecraftforge.client.IItemRenderer.ItemRenderType
 import org.lwjgl.opengl.GL11
 import java.io.DataInputStream
 import java.io.DataOutputStream
 
 class SterlingEngineDescriptor(
         name: String,
-        obj3D: org.ja13.eau.misc.Obj3D,
-        val cable: org.ja13.eau.cable.CableRenderDescriptor,
+        obj3D: Obj3D,
+        val cable: CableRenderDescriptor,
         val dTtoU: FunctionTable
 ): org.ja13.eau.node.transparent.TransparentNodeDescriptor(name, SterlingEngineElement::class.java, SterlingEngineRender::class.java) {
 
-    private val main: org.ja13.eau.misc.Obj3D.Obj3DPart = obj3D.getPart("main")
+    private val main: Obj3D.Obj3DPart = obj3D.getPart("Base_Cylinder.006")
+    private val motorPulley: Obj3D.Obj3DPart = obj3D.getPart("MotorPulley_Cylinder.012")
+    private val flywheelPulley: Obj3D.Obj3DPart = obj3D.getPart("FlywheelPulley_Cylinder.010")
 
     init {
         voltageTier = VoltageTier.HIGH_HOUSEHOLD
@@ -83,8 +64,25 @@ class SterlingEngineDescriptor(
         load.rs = org.ja13.eau.EAU.getSmallRs()
     }
 
-    fun draw() {
+    fun draw(angle: Float) {
+        // I don't care how many darn magic numbers this is. I'm not doing it again. 3 hours of my life I won't get back
+        GL11.glRotatef(180f, 0f, 1f, 0f)
+        GL11.glTranslated(-0.5, -0.5, 0.5)
         main.draw()
+        val fy = 0.1875 + 0.5
+        val fz = 0.125 - 0.5
+        val my = -0.31250
+        val mz = -0.3125 - 0.125
+        GL11.glTranslated(0.0, fy, fz)
+        GL11.glRotatef(((angle * 360f) / 2f / Math.PI).toFloat(), 1f, 0f, 0f)
+        GL11.glTranslated(0.0, -fy, -fz)
+        flywheelPulley.draw()
+        GL11.glTranslated(0.0, fy, fz)
+        GL11.glRotatef(((-angle * 360f) / 2f / Math.PI).toFloat(), 1f, 0f, 0f)
+        GL11.glTranslated(0.0, my, mz)
+        GL11.glRotatef(((angle * 360f * 1.5) / 2f / Math.PI).toFloat(), 1f, 0f, 0f)
+        GL11.glTranslated(0.0,  -0.25 -0.125, 0.5 + 0.3125)
+        motorPulley.draw()
     }
 
     override fun handleRenderType(item: ItemStack, type: ItemRenderType): Boolean {
@@ -99,7 +97,7 @@ class SterlingEngineDescriptor(
         if (type == ItemRenderType.INVENTORY) {
             super.renderItem(type, item, *data)
         } else {
-            draw()
+            draw(0f)
         }
     }
 
@@ -189,6 +187,7 @@ class SterlingEngineElement(node: org.ja13.eau.node.transparent.TransparentNode,
         super.networkSerialize(stream)
         node.lrduCubeMask.getTranslate(front.down()).serialize(stream)
         stream.writeDouble(warmLoad.Tc - coolLoad.Tc)
+        stream.writeDouble(voltageSource.u)
     }
 
     override fun getWaila(): MutableMap<String, String> {
@@ -209,6 +208,7 @@ class SterlingEngineElectricalProcess(val element: SterlingEngineElement): org.j
         val deltaT = element.warmLoad.Tc - element.coolLoad.Tc
         val targetU = element.descriptor.dTtoU.getValue(deltaT)
 
+        val oldVoltage = element.voltageSource.u
         val th = element.positiveLoad.subSystem.getTh(element.positiveLoad, element.voltageSource)
         var Ut = when {
             targetU < th.U -> {
@@ -236,6 +236,10 @@ class SterlingEngineElectricalProcess(val element: SterlingEngineElement): org.j
             if (Ut < th.U) Ut = th.U
         }
         element.voltageSource.u = Ut
+        // Update the client when the voltage changes a bit
+        if (Math.abs(element.voltageSource.u - oldVoltage) > 1.0) {
+            element.needPublish()
+        }
     }
 
     override fun rootSystemPreStepProcess() {
@@ -262,13 +266,15 @@ class SterlingEnglineThermalProcess(val element: SterlingEngineElement): org.ja1
 class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNodeEntity, descriptor: org.ja13.eau.node.transparent.TransparentNodeDescriptor): org.ja13.eau.node.transparent.TransparentNodeElementRender(entity, descriptor) {
     val descriptor = descriptor as SterlingEngineDescriptor
     val factorLimiter = SlewLimiter(0.2)
+    var voltage = 0.0
     var connectionType: org.ja13.eau.cable.CableRenderType? = null
+    var rotation = 0f
 
     val eConn = LRDUMask()
     val tConn = LRDUMask()
 
     init {
-        addLoopedSound(object : LoopedSound("eln:heat_turbine_50v", coordonate(), ISound.AttenuationType.LINEAR) {
+        addLoopedSound(object : LoopedSound("eau:heat_turbine_50v", coordonate(), ISound.AttenuationType.LINEAR) {
             override fun getVolume(): Float {
                 return 0.1f * factorLimiter.position.toFloat()
             }
@@ -283,7 +289,7 @@ class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNode
         GL11.glPushMatrix()
         front.glRotateXnRef()
         GL11.glScalef(1.0f, 1.0f, 1.0f)
-        descriptor.draw()
+        descriptor.draw(rotation)
         GL11.glPopMatrix()
         connectionType = org.ja13.eau.cable.CableRender.connectionType(tileEntity, eConn, front.down())
 
@@ -299,7 +305,7 @@ class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNode
         }
     }
 
-    override fun getCableRender(side: Direction, lrdu: LRDU): org.ja13.eau.cable.CableRenderDescriptor? {
+    override fun getCableRender(side: Direction, lrdu: LRDU): CableRenderDescriptor? {
         if (lrdu == LRDU.Down) {
             if (side == front) return descriptor.cable
             if (side == front.back()) return descriptor.cable
@@ -307,8 +313,13 @@ class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNode
         return null
     }
 
+    val ratio = 0.0025f
+
     override fun refresh(deltaT: Double) {
         factorLimiter.step(deltaT)
+        rotation += voltage.toFloat() * ratio
+        while(rotation > 360) rotation -= 360
+        println("$rotation $voltage $ratio")
         super.refresh(deltaT)
     }
 
@@ -320,5 +331,7 @@ class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNode
             factorLimiter.target = deltaT / 350.0
         }
         factorLimiter.target = 0.0
+        voltage = stream.readDouble()
+        println("received voltage $voltage")
     }
 }

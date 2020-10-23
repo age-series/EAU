@@ -24,6 +24,7 @@ public class Obj3DFolder {
      * Load all obj models available in the release mod asset folder.
      */
     public void loadAllElnModels() {
+        System.out.println("Loading models...");
         try {
             // Find location of electrical age jar file.
             CodeSource codeSource = Obj3DFolder.class.getProtectionDomain().getCodeSource();

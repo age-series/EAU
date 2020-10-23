@@ -325,8 +325,7 @@ public class EAU {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-
-        System.out.println("EAU Enters PreInit");
+        Utils.println("EAU Enters PreInit");
 
         elnNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("eau");
         elnNetwork.registerMessage(TransparentNodeRequestPacketHandler.class, TransparentNodeRequestPacket.class, 1, Side.SERVER);

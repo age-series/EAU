@@ -34,7 +34,6 @@ import org.ja13.eau.sixnode.batterycharger.BatteryChargerDescriptor
 import org.ja13.eau.sixnode.diode.DiodeDescriptor
 import org.ja13.eau.sixnode.electricalalarm.ElectricalAlarmDescriptor
 import org.ja13.eau.sixnode.electricalbreaker.ElectricalBreakerDescriptor
-import org.ja13.eau.sixnode.electriccable.ElectricCableDescriptor
 import org.ja13.eau.sixnode.electricaldatalogger.ElectricalDataLoggerDescriptor
 import org.ja13.eau.sixnode.electricaldigitaldisplay.ElectricalDigitalDisplayDescriptor
 import org.ja13.eau.sixnode.electricalentitysensor.ElectricalEntitySensorDescriptor
@@ -54,6 +53,7 @@ import org.ja13.eau.sixnode.electricalvumeter.ElectricalVuMeterDescriptor
 import org.ja13.eau.sixnode.electricalwatch.ElectricalWatchDescriptor
 import org.ja13.eau.sixnode.electricalweathersensor.ElectricalWeatherSensorDescriptor
 import org.ja13.eau.sixnode.electricalwindsensor.ElectricalWindSensorDescriptor
+import org.ja13.eau.sixnode.electriccable.ElectricCableDescriptor
 import org.ja13.eau.sixnode.energymeter.EnergyMeterDescriptor
 import org.ja13.eau.sixnode.groundcable.GroundCableDescriptor
 import org.ja13.eau.sixnode.hub.HubDescriptor
@@ -152,7 +152,7 @@ class SixNodeRegistry {
 
         @Suppress("MemberVisibilityCanBePrivate")
         fun registerSixNode(group: Int, subId: Int, descriptor: SixNodeDescriptor) {
-            println("Registering SixNode: ${descriptor.name}")
+            //println("Registering SixNode: ${descriptor.name}")
             val full = subId + (group shl 6)
             if (registeredList[full] != null) {
                 println("${descriptor.name} tried to register on top of ${registeredList[full]}!")
@@ -163,7 +163,7 @@ class SixNodeRegistry {
 
         @Suppress("MemberVisibilityCanBePrivate")
         fun registerHiddenSixNode(group: Int, subId: Int, descriptor: SixNodeDescriptor) {
-            println("Shadow registering SixNode: ${descriptor.name}")
+            //println("Shadow registering SixNode: ${descriptor.name}")
             val full = subId + (group shl 6)
             if (registeredList[full] != null) {
                 println("${descriptor.name} tried to register on top of ${registeredList[full]}!")

@@ -28,12 +28,12 @@ open class GenericItemBlockUsingDamageDescriptor @JvmOverloads constructor(name:
         ImageList.blockTextures.add("$iconName.png")
         ImageList.blockTextures.add("$iconName-ni.png")
 
-        if (EAU.instance.isDevelopmentRun) {
-            if (!schematicIconExists(iconName))
-                println("There's an icon missing!: assets/eau/textures/blocks/$iconName.png")
-            if (!regularIconExists("$iconName-ni"))
-                println("There's an icon missing: assets/eau/textures/blocks/$iconName-ni.png")
-        }
+        //if (EAU.instance.isDevelopmentRun) {
+            //if (!schematicIconExists(iconName))
+                //println("There's an icon missing!: assets/eau/textures/blocks/$iconName.png")
+            //if (!regularIconExists("$iconName-ni"))
+                //println("There's an icon missing: assets/eau/textures/blocks/$iconName-ni.png")
+        //}
     }
 
     private fun schematicIconExists(name: String) = javaClass.classLoader.getResource("assets/eau/textures/blocks/$iconName.png") != null

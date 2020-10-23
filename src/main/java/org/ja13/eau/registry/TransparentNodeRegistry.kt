@@ -2,6 +2,7 @@ package org.ja13.eau.registry
 
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
+import org.ja13.eau.EAU
 import org.ja13.eau.EAU.obj
 import org.ja13.eau.gridnode.electricalpole.ElectricalPoleDescriptor
 import org.ja13.eau.gridnode.transformer.GridTransformerDescriptor
@@ -32,6 +33,7 @@ import org.ja13.eau.transparentnode.festive.HolidayCandleDescriptor
 import org.ja13.eau.transparentnode.festive.StringLightsDescriptor
 import org.ja13.eau.transparentnode.heatsink.FanHeatsinkDescriptor
 import org.ja13.eau.transparentnode.heatsink.HeatsinkDescriptor
+import org.ja13.eau.transparentnode.sterlingengine.SterlingEngineDescriptor
 import org.ja13.eau.transparentnode.variabledcdc.VariableDcDcDescriptor
 
 class TransparentNodeRegistry {
@@ -90,12 +92,12 @@ class TransparentNodeRegistry {
 
         @Suppress("MemberVisibilityCanBePrivate")
         fun registerTransparentNode(group: Int, subId: Int, descriptor: org.ja13.eau.node.transparent.TransparentNodeDescriptor) {
-            org.ja13.eau.EAU.transparentNodeItem.addDescriptor(subId + (group shl 6), descriptor)
+            EAU.transparentNodeItem.addDescriptor(subId + (group shl 6), descriptor)
         }
 
         @Suppress("MemberVisibilityCanBePrivate")
         fun registerHiddenTransparentNode(group: Int, subId: Int, descriptor: org.ja13.eau.node.transparent.TransparentNodeDescriptor) {
-            org.ja13.eau.EAU.transparentNodeItem.addWithoutRegistry(subId + (group shl 6), descriptor)
+            EAU.transparentNodeItem.addWithoutRegistry(subId + (group shl 6), descriptor)
         }
 
         /*
@@ -168,7 +170,7 @@ class TransparentNodeRegistry {
                     nominalRads, nominalU,
                     50f,
                     nominalP,
-                    org.ja13.eau.EAU.sixNodeThermalLoadInitializer.copy()
+                    EAU.sixNodeThermalLoadInitializer.copy()
                 )
                 registerTransparentNode(id, 3, desc)
             }
@@ -210,15 +212,15 @@ class TransparentNodeRegistry {
                 val desc = MotorDescriptor(
                     org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Shaft Motor"),
                     obj.getObj("Motor"),
-                    org.ja13.eau.EAU.mediumInsulationMediumCurrentCopperCable,
+                    EAU.mediumInsulationMediumCurrentCopperCable,
                     nominalRads,
                     nominalU,
                     nominalP,
                     300f,
-                    org.ja13.eau.EAU.sixNodeThermalLoadInitializer.copy()
+                    EAU.sixNodeThermalLoadInitializer.copy()
                 )
                 registerTransparentNode(id, 9, desc)
-                org.ja13.eau.EAU.blockTabIcon = desc.newItemStack().item
+                EAU.blockTabIcon = desc.newItemStack().item
             }
             run {
                 val desc = ClutchDescriptor(
@@ -251,14 +253,13 @@ class TransparentNodeRegistry {
                 desc.setGhostGroup(g)
                 registerTransparentNode(id, 12, desc)
             }
-            /*
             run {
                 val temperatureToVoltage = FunctionTable(doubleArrayOf(0.0, 0.1, 0.85,
                     1.0, 1.1, 1.15, 1.18, 1.19, 1.25), 8.0 / 5.0)
-                val desc = SterlingEngineDescriptor("Sterling Engine", obj.getObj("turbinebblue"), org.ja13.eau.EAU.smallInsulationMediumCurrentRender, temperatureToVoltage)
+                val desc = SterlingEngineDescriptor("Sterling Engine", obj.getObj("StirlingEngine"), EAU.smallInsulationMediumCurrentRender, temperatureToVoltage)
                 registerTransparentNode(id, 13, desc)
             }
-             */
+
         }
 
         private fun registerElectricalAntenna(id: Int) {
@@ -272,7 +273,7 @@ class TransparentNodeRegistry {
                     0.9, 0.7,
                     VoltageTier.LOW.voltage, power,
                     VoltageTier.LOW.voltage * 1.3, power * 1.3,
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable)
+                    EAU.smallInsulationLowCurrentCopperCable)
                 registerTransparentNode(id, 0, desc)
             }
             run {
@@ -282,7 +283,7 @@ class TransparentNodeRegistry {
                 desc = org.ja13.eau.transparentnode.electricalantennarx.ElectricalAntennaRxDescriptor(name,
                     obj.getObj("lowpowerreceiverantenna"), VoltageTier.LOW.voltage, power,
                     VoltageTier.LOW.voltage * 1.3, power * 1.3,
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable)
+                    EAU.smallInsulationLowCurrentCopperCable)
                 registerTransparentNode(id, 1, desc)
             }
             run {
@@ -294,7 +295,7 @@ class TransparentNodeRegistry {
                     0.9, 0.75,
                     VoltageTier.LOW_HOUSEHOLD.voltage, power,
                     VoltageTier.LOW_HOUSEHOLD.voltage * 1.3, power * 1.3,
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable)
+                    EAU.smallInsulationMediumCurrentCopperCable)
                 registerTransparentNode(id, 2, desc)
             }
             run {
@@ -304,7 +305,7 @@ class TransparentNodeRegistry {
                 desc = org.ja13.eau.transparentnode.electricalantennarx.ElectricalAntennaRxDescriptor(name,
                     obj.getObj("lowpowerreceiverantenna"), VoltageTier.LOW_HOUSEHOLD.voltage, power,
                     VoltageTier.LOW_HOUSEHOLD.voltage * 1.3, power * 1.3,
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable)
+                    EAU.smallInsulationMediumCurrentCopperCable)
                 registerTransparentNode(id, 3, desc)
             }
             run {
@@ -316,7 +317,7 @@ class TransparentNodeRegistry {
                     0.95, 0.8,
                     VoltageTier.HIGH_HOUSEHOLD.voltage, power,
                     VoltageTier.HIGH_HOUSEHOLD.voltage * 1.3, power * 1.3,
-                    org.ja13.eau.EAU.smallInsulationHighCurrentCopperCable)
+                    EAU.smallInsulationHighCurrentCopperCable)
                 registerTransparentNode(id, 4, desc)
             }
             run {
@@ -326,7 +327,7 @@ class TransparentNodeRegistry {
                 desc = org.ja13.eau.transparentnode.electricalantennarx.ElectricalAntennaRxDescriptor(name,
                     obj.getObj("lowpowerreceiverantenna"), VoltageTier.HIGH_HOUSEHOLD.voltage, power,
                     VoltageTier.HIGH_HOUSEHOLD.voltage * 1.3, power * 1.3,
-                    org.ja13.eau.EAU.smallInsulationHighCurrentCopperCable)
+                    EAU.smallInsulationHighCurrentCopperCable)
                 registerTransparentNode(id, 5, desc)
             }
         }
@@ -343,10 +344,10 @@ class TransparentNodeRegistry {
             val stdU = VoltageTier.LOW.voltage
             val stdP = 2_000.0
             val stdEfficiency = 1.0 - 2.0 / 50.0
-            org.ja13.eau.EAU.batteryVoltageFunctionTable = voltageFunction
+            EAU.batteryVoltageFunctionTable = voltageFunction
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Cost Oriented Battery")
-                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name, "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
+                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name, "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable,
                     0.5,
                     true, true,
                     voltageFunction,
@@ -354,7 +355,7 @@ class TransparentNodeRegistry {
                     stdP * 1.2,
                     0.00,
                     stdP,
-                    stdDischargeTime * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife,
+                    stdDischargeTime * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
                     heatTIme, 60.0, (-100).toDouble(),
                     "Cheap battery"
                 )
@@ -365,9 +366,9 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Capacity Oriented Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction,
+                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction,
                     stdU / 4, stdP / 2 * 1.2, 0.000,
-                    stdP / 2, stdDischargeTime * 8 * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife,
+                    stdP / 2, stdDischargeTime * 8 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
                     heatTIme, 60.0, (-100).toDouble(),
                     "the battery"
                 )
@@ -378,9 +379,9 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Voltage Oriented Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction, stdU * 4,
+                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction, stdU * 4,
                     stdP * 1.2, 0.000,
-                    stdP, stdDischargeTime * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife,
+                    stdP, stdDischargeTime * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
                     heatTIme, 60.0, (-100).toDouble(),
                     "the battery"
                 )
@@ -391,9 +392,9 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Current Oriented Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction, stdU,
+                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction, stdU,
                     stdP * 1.2 * 4, 0.000,
-                    stdP * 4, stdDischargeTime / 6 * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife,
+                    stdP * 4, stdDischargeTime / 6 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
                     heatTIme, 60.0, (-100).toDouble(),
                     "the battery"
                 )
@@ -404,9 +405,9 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Life Oriented Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, false, voltageFunction, stdU,
+                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, false, voltageFunction, stdU,
                     stdP * 1.2, 0.000,
-                    stdP, stdDischargeTime * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife * 8,
+                    stdP, stdDischargeTime * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife * 8,
                     heatTIme, 60.0, (-100).toDouble(),
                     "the battery"
                 )
@@ -417,9 +418,9 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Single-use Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable, 1.0, false, false, voltageFunction, stdU,
+                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 1.0, false, false, voltageFunction, stdU,
                     stdP * 1.2 * 2, 0.000,
-                    stdP * 2, stdDischargeTime / 4 * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife * 8,
+                    stdP * 2, stdDischargeTime / 4 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife * 8,
                     heatTIme, 60.0, (-100).toDouble(),
                     "the battery"
                 )
@@ -429,9 +430,9 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Experimental Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, false, voltageFunction, stdU * 2,
+                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, false, voltageFunction, stdU * 2,
                     stdP * 1.2 * 8, 0.025,
-                    stdP * 8, stdDischargeTime / 4 * org.ja13.eau.EAU.batteryCapacityFactor, stdEfficiency, org.ja13.eau.EAU.stdBatteryHalfLife * 8,
+                    stdP * 8, stdDischargeTime / 4 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife * 8,
                     heatTIme, 60.0, (-100).toDouble(),
                     "You were unable to fix the power leaking problem, though."
                 )
@@ -443,7 +444,7 @@ class TransparentNodeRegistry {
 
         private fun registerElectricalFurnace(id: Int) {
             var name: String
-            org.ja13.eau.EAU.furnaceList.add(ItemStack(Blocks.furnace))
+            EAU.furnaceList.add(ItemStack(Blocks.furnace))
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Electrical Furnace")
                 val powerFromTemperatureTable = doubleArrayOf(0.0, 20.0, 40.0, 80.0, 160.0, 240.0, 360.0, 540.0, 756.0, 1058.4, 1481.76)
@@ -461,9 +462,9 @@ class TransparentNodeRegistry {
                     name, powerFromTemperature, thermalPlostfT,
                     40.0
                 )
-                org.ja13.eau.EAU.electricalFurnace = desc
+                EAU.electricalFurnace = desc
                 registerTransparentNode(id, 0, desc)
-                org.ja13.eau.EAU.furnaceList.add(desc.newItemStack())
+                EAU.furnaceList.add(desc.newItemStack())
             }
         }
 
@@ -475,8 +476,8 @@ class TransparentNodeRegistry {
                     "maceratora", VoltageTier.LOW.voltage, 200.0,  // double nominalU,double nominalP,
                     VoltageTier.LOW.voltage * 1.25,  // double maximalU,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),  // thermal,
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
-                    org.ja13.eau.EAU.maceratorRecipes)
+                    EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.maceratorRecipes)
                 desc.setRunningSound("eln:macerator")
                 registerTransparentNode(id, 0, desc)
             }
@@ -486,9 +487,9 @@ class TransparentNodeRegistry {
                     "maceratorb", VoltageTier.LOW_HOUSEHOLD.voltage, 2000.0,  // double nominalU,double nominalP,
                     VoltageTier.LOW_HOUSEHOLD.voltage * 1.25,  // double maximalU,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),  // thermal,
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.smallInsulationMediumCurrentCopperCable,
                     // cable
-                    org.ja13.eau.EAU.maceratorRecipes)
+                    EAU.maceratorRecipes)
                 desc.setRunningSound("eln:macerator")
                 registerTransparentNode(id, 1, desc)
             }
@@ -513,8 +514,8 @@ class TransparentNodeRegistry {
                     VoltageTier.LOW.voltage, 200.0,
                     VoltageTier.LOW.voltage * 1.25,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
-                    org.ja13.eau.EAU.compressorRecipes)
+                    EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.compressorRecipes)
                 desc.setRunningSound("eln:compressor_run")
                 desc.setEndSound(org.ja13.eau.sound.SoundCommand("eln:compressor_end"))
                 registerTransparentNode(id, 0, desc)
@@ -527,8 +528,8 @@ class TransparentNodeRegistry {
                     VoltageTier.LOW_HOUSEHOLD.voltage, 2000.0,
                     VoltageTier.LOW_HOUSEHOLD.voltage * 1.25,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
-                    org.ja13.eau.EAU.compressorRecipes)
+                    EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.compressorRecipes)
                 desc.setRunningSound("eln:compressor_run")
                 desc.setEndSound(org.ja13.eau.sound.SoundCommand("eln:compressor_end"))
                 registerTransparentNode(id, 1, desc)
@@ -545,8 +546,8 @@ class TransparentNodeRegistry {
                     VoltageTier.LOW.voltage, 200.0,
                     VoltageTier.LOW.voltage * 1.25,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
-                    org.ja13.eau.EAU.magnetiserRecipes)
+                    EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.magnetiserRecipes)
                 desc.setRunningSound("eln:Motor")
                 registerTransparentNode(id, 0, desc)
             }
@@ -558,8 +559,8 @@ class TransparentNodeRegistry {
                     VoltageTier.LOW_HOUSEHOLD.voltage, 2000.0,
                     VoltageTier.LOW_HOUSEHOLD.voltage * 1.25,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
-                    org.ja13.eau.EAU.magnetiserRecipes)
+                    EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.magnetiserRecipes)
                 desc.setRunningSound("eln:Motor")
                 registerTransparentNode(id, 1, desc)
             }
@@ -575,8 +576,8 @@ class TransparentNodeRegistry {
                     VoltageTier.LOW.voltage, 200.0,
                     VoltageTier.LOW.voltage * 1.25,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
-                    org.ja13.eau.EAU.plateMachineRecipes)
+                    EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.plateMachineRecipes)
                 desc.setRunningSound("eln:plate_machine")
                 registerTransparentNode(id, 0, desc)
             }
@@ -588,8 +589,8 @@ class TransparentNodeRegistry {
                     VoltageTier.LOW_HOUSEHOLD.voltage, 2000.0,
                     VoltageTier.LOW_HOUSEHOLD.voltage * 1.25,
                     org.ja13.eau.sim.ThermalLoadInitializer(80.0, (-100).toDouble(), 10.0, 100000.0),
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
-                    org.ja13.eau.EAU.plateMachineRecipes)
+                    EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.plateMachineRecipes)
                 desc.setRunningSound("eln:plate_machine")
                 registerTransparentNode(id, 1, desc)
             }
@@ -601,7 +602,7 @@ class TransparentNodeRegistry {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "12V Egg Incubator")
                 val desc = org.ja13.eau.transparentnode.eggincubator.EggIncubatorDescriptor(
                     name, obj.getObj("eggincubator"),
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.smallInsulationLowCurrentCopperCable,
                     VoltageTier.LOW.voltage, 12.0)
                 registerTransparentNode(id, 0, desc)
             }
@@ -620,7 +621,7 @@ class TransparentNodeRegistry {
                     obj.getObj("AutoMiner"),
                     powerLoad, lightCoord, miningCoord,
                     2, 1, 0,
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.smallInsulationMediumCurrentCopperCable,
                     1.0, 50.0
                 )
                 val ghostGroup = org.ja13.eau.ghost.GhostGroup()
@@ -647,7 +648,7 @@ class TransparentNodeRegistry {
                 val desc = org.ja13.eau.transparentnode.solarpanel.SolarPanelDescriptor(name,
                     obj.getObj("smallsolarpannel"), null,
                     ghostGroup, 0, 1, 0,
-                    null, solarVoltage / 4, 65.0 * org.ja13.eau.EAU.solarPanelPowerFactor,
+                    null, solarVoltage / 4, 65.0 * EAU.solarPanelPowerFactor,
                     0.01,
                     Math.PI / 2, Math.PI / 2
                 )
@@ -657,9 +658,9 @@ class TransparentNodeRegistry {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Small Rotating Solar Panel")
                 ghostGroup = org.ja13.eau.ghost.GhostGroup()
                 val desc = org.ja13.eau.transparentnode.solarpanel.SolarPanelDescriptor(name,
-                    obj.getObj("smallsolarpannelrot"), org.ja13.eau.EAU.smallInsulationLowCurrentRender,
+                    obj.getObj("smallsolarpannelrot"), EAU.smallInsulationLowCurrentRender,
                     ghostGroup, 0, 1, 0,
-                    null, solarVoltage / 4, org.ja13.eau.EAU.solarPanelBasePower * org.ja13.eau.EAU.solarPanelPowerFactor,
+                    null, solarVoltage / 4, EAU.solarPanelBasePower * EAU.solarPanelPowerFactor,
                     0.01,
                     Math.PI / 4, Math.PI / 4 * 3
                 )
@@ -672,10 +673,10 @@ class TransparentNodeRegistry {
                 ghostGroup.addRectangle(0, 1, 0, 0, -1, 1)
                 ghostGroup.removeElement(0, 0, 0)
                 val desc = org.ja13.eau.transparentnode.solarpanel.SolarPanelDescriptor(name,
-                    obj.getObj("bigSolarPanel"), org.ja13.eau.EAU.smallInsulationMediumCurrentRender,
+                    obj.getObj("bigSolarPanel"), EAU.smallInsulationMediumCurrentRender,
                     ghostGroup, 1, 1, 0,
                     groundCoordinate,
-                    solarVoltage * 2, org.ja13.eau.EAU.solarPanelBasePower * org.ja13.eau.EAU.solarPanelPowerFactor * 8,
+                    solarVoltage * 2, EAU.solarPanelBasePower * EAU.solarPanelPowerFactor * 8,
                     0.01,
                     Math.PI / 2, Math.PI / 2
                 )
@@ -688,10 +689,10 @@ class TransparentNodeRegistry {
                 ghostGroup.addRectangle(0, 1, 0, 0, -1, 1)
                 ghostGroup.removeElement(0, 0, 0)
                 val desc = org.ja13.eau.transparentnode.solarpanel.SolarPanelDescriptor(name,
-                    obj.getObj("bigSolarPanelrot"), org.ja13.eau.EAU.smallInsulationMediumCurrentRender,
+                    obj.getObj("bigSolarPanelrot"), EAU.smallInsulationMediumCurrentRender,
                     ghostGroup, 1, 1, 1,
                     groundCoordinate,
-                    solarVoltage * 2, org.ja13.eau.EAU.solarPanelBasePower * org.ja13.eau.EAU.solarPanelPowerFactor * 8,
+                    solarVoltage * 2, EAU.solarPanelBasePower * EAU.solarPanelPowerFactor * 8,
                     0.01,
                     Math.PI / 8 * 3, Math.PI / 8 * 5
                 )
@@ -707,9 +708,9 @@ class TransparentNodeRegistry {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Wind Turbine")
                 val desc = org.ja13.eau.transparentnode.windturbine.WindTurbineDescriptor(
                     name, obj.getObj("WindTurbineMini"),
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.smallInsulationLowCurrentCopperCable,
                     powerFromWind,
-                    160 * org.ja13.eau.EAU.windTurbinePowerFactor, 10.0,
+                    160 * EAU.windTurbinePowerFactor, 10.0,
                     VoltageTier.LOW.voltage * 1.18, 22.0,
                     3,
                     7, 2, 2,
@@ -742,7 +743,7 @@ class TransparentNodeRegistry {
                     obj.getObj("activethermaldissipatora"),
                     VoltageTier.LOW.voltage, 50.0,
                     800.0,
-                    org.ja13.eau.EAU.smallInsulationLowCurrentCopperCable,
+                    EAU.smallInsulationLowCurrentCopperCable,
                     130.0, (-100).toDouble(),
                     200.0, 30.0,
                     10.0, 1.0
@@ -756,7 +757,7 @@ class TransparentNodeRegistry {
                     obj.getObj("200vactivethermaldissipatora"),
                     VoltageTier.LOW_HOUSEHOLD.voltage, 60.0,
                     1200.0,
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.smallInsulationMediumCurrentCopperCable,
                     130.0, (-100).toDouble(),
                     200.0, 30.0,
                     10.0, 1.0
@@ -766,13 +767,13 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "1k Large Rheostat")
                 val heatsink = HeatsinkDescriptor(name, obj.getObj("LargeRheostat"), 4000.0)
-                val desc = LargeRheostatDescriptor(name, heatsink, org.ja13.eau.EAU.mediumInsulationMediumCurrentCopperCable, 1_000.0)
+                val desc = LargeRheostatDescriptor(name, heatsink, EAU.mediumInsulationMediumCurrentCopperCable, 1_000.0)
                 registerTransparentNode(id, 3, desc)
             }
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "10k Large Rheostat")
                 val heatsink = HeatsinkDescriptor(name, obj.getObj("LargeRheostat"), 4000.0)
-                val desc = LargeRheostatDescriptor(name, heatsink, org.ja13.eau.EAU.mediumInsulationMediumCurrentCopperCable, 10_000.0)
+                val desc = LargeRheostatDescriptor(name, heatsink, EAU.mediumInsulationMediumCurrentCopperCable, 10_000.0)
                 registerTransparentNode(id, 4, desc)
             }
             run {
@@ -800,7 +801,7 @@ class TransparentNodeRegistry {
                 doorClose.addRectangle(-2, -2, 0, 1, 0, 0)
                 val desc = org.ja13.eau.transparentnode.teleporter.TeleporterDescriptor(
                     name, obj.getObj("Transporter"),
-                    org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable,
+                    EAU.smallInsulationMediumCurrentCopperCable,
                     Coordonate(-1, 0, 0, 0), Coordonate(-1, 1, 0, 0),
                     2,
                     powerLoad,
@@ -812,7 +813,7 @@ class TransparentNodeRegistry {
                 g.addRectangle(-2, 0, 0, 1, 1, 1)
                 g.addRectangle(-4, -1, 2, 2, 0, 0)
                 g.addElement(0, 1, 0)
-                g.addElement(-1, 0, 0, org.ja13.eau.EAU.ghostBlock, org.ja13.eau.ghost.GhostBlock.tFloor)
+                g.addElement(-1, 0, 0, EAU.ghostBlock, org.ja13.eau.ghost.GhostBlock.tFloor)
                 g.addRectangle(-3, -3, 0, 1, -1, -1)
                 g.addRectangle(-3, -3, 0, 1, 1, 1)
                 desc.setGhostGroup(g)
@@ -831,20 +832,20 @@ class TransparentNodeRegistry {
         private fun registerFuelGenerator(id: Int) {
             run {
                 val desc = FuelGeneratorDescriptor(org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "120V Fuel Generator"), obj.getObj("FuelGenerator50V"),
-                    120.0, org.ja13.eau.EAU.fuelGeneratorPowerFactor * 1200, VoltageTier.LOW.voltage * 1.25, org.ja13.eau.EAU.fuelGeneratorTankCapacity)
+                    120.0, EAU.fuelGeneratorPowerFactor * 1200, VoltageTier.LOW.voltage * 1.25, EAU.fuelGeneratorTankCapacity)
                 registerTransparentNode(id, 0, desc)
             }
             run {
                 val desc = FuelGeneratorDescriptor(org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "240V Fuel Generator"), obj.getObj("FuelGenerator200V"),
-                    240.0, org.ja13.eau.EAU.fuelGeneratorPowerFactor * 6000, VoltageTier.LOW_HOUSEHOLD.voltage * 1.25,
-                    org.ja13.eau.EAU.fuelGeneratorTankCapacity)
+                    240.0, EAU.fuelGeneratorPowerFactor * 6000, VoltageTier.LOW_HOUSEHOLD.voltage * 1.25,
+                    EAU.fuelGeneratorTankCapacity)
                 registerTransparentNode(id, 1, desc)
             }
         }
 
         private fun registerGridDevices(id: Int) {
             run {
-                val desc = GridTransformerDescriptor("Grid DC-DC Converter", obj.getObj("GridConverter"), "textures/wire.png", org.ja13.eau.EAU.smallInsulationMediumCurrentCopperCable)
+                val desc = GridTransformerDescriptor("Grid DC-DC Converter", obj.getObj("GridConverter"), "textures/wire.png", EAU.smallInsulationMediumCurrentCopperCable)
                 val g = org.ja13.eau.ghost.GhostGroup()
                 g.addElement(1, 0, 0)
                 g.addElement(0, 0, -1)
@@ -861,7 +862,7 @@ class TransparentNodeRegistry {
                     "Utility Pole",
                     obj.getObj("UtilityPole"),
                     "textures/wire.png",
-                    org.ja13.eau.EAU.uninsulatedMediumCurrentAluminumCable,
+                    EAU.uninsulatedMediumCurrentAluminumCable,
                     false,
                     40,
                     51200.0)
@@ -879,7 +880,7 @@ class TransparentNodeRegistry {
                     "Utility Pole w/DC-DC Converter",
                     obj.getObj("UtilityPole"),
                     "textures/wire.png",
-                    org.ja13.eau.EAU.uninsulatedMediumCurrentAluminumCable,
+                    EAU.uninsulatedMediumCurrentAluminumCable,
                     true,
                     40,
                     12800.0)
@@ -894,7 +895,7 @@ class TransparentNodeRegistry {
                 val desc = ElectricalPoleDescriptor("Transmission Tower",
                     obj.getObj("TransmissionTower"),
                     "textures/wire.png",
-                    org.ja13.eau.EAU.uninsulatedMediumCurrentAluminumCable,
+                    EAU.uninsulatedMediumCurrentAluminumCable,
                     false,
                     96,
                     51200.0)
@@ -912,7 +913,7 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Christmas Tree")
                 val desc = ChristmasTreeDescriptor(name, obj.getObj("Christmas_Tree"))
-                if (org.ja13.eau.EAU.enableFestivities) {
+                if (EAU.enableFestivities) {
                     registerTransparentNode(id, 0, desc)
                 } else {
                     registerHiddenTransparentNode(id, 0, desc)
@@ -921,7 +922,7 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Holiday Candle")
                 val desc = HolidayCandleDescriptor(name, obj.getObj("Candle_Light"))
-                if (org.ja13.eau.EAU.enableFestivities) {
+                if (EAU.enableFestivities) {
                     registerTransparentNode(id, 1, desc)
                 } else {
                     registerHiddenTransparentNode(id, 1, desc)
@@ -930,7 +931,7 @@ class TransparentNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "String Lights")
                 val desc = StringLightsDescriptor(name, obj.getObj("Christmas_Lights"))
-                if (org.ja13.eau.EAU.enableFestivities) {
+                if (EAU.enableFestivities) {
                     registerTransparentNode(id, 2, desc)
                 } else {
                     registerHiddenTransparentNode(id, 2, desc)
