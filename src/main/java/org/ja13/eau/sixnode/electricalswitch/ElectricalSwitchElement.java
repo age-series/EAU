@@ -1,31 +1,12 @@
 package org.ja13.eau.sixnode.electricalswitch;
 
-import org.ja13.eau.EAU;
-import org.ja13.eau.i18n.I18N;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.node.NodeBase;
-import org.ja13.eau.node.six.SixNode;
-import org.ja13.eau.node.six.SixNodeDescriptor;
-import org.ja13.eau.node.six.SixNodeElement;
-import org.ja13.eau.sim.ElectricalLoad;
-import org.ja13.eau.sim.ThermalLoad;
-import org.ja13.eau.sim.mna.component.Resistor;
-import org.ja13.eau.sim.mna.component.ResistorSwitch;
-import org.ja13.eau.sim.nbt.NbtElectricalLoad;
-import org.ja13.eau.sim.process.destruct.VoltageStateWatchDog;
-import org.ja13.eau.sim.process.destruct.WorldExplosion;
-import org.ja13.eau.sound.SoundCommand;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.ja13.eau.EAU;
 import org.ja13.eau.i18n.I18N;
 import org.ja13.eau.misc.Direction;
 import org.ja13.eau.misc.LRDU;
 import org.ja13.eau.misc.Utils;
-import org.ja13.eau.node.NodeBase;
 import org.ja13.eau.node.six.SixNode;
 import org.ja13.eau.node.six.SixNodeDescriptor;
 import org.ja13.eau.node.six.SixNodeElement;
@@ -52,7 +33,6 @@ public class ElectricalSwitchElement extends SixNodeElement {
 
     VoltageStateWatchDog voltageWatchDogA = new VoltageStateWatchDog();
     VoltageStateWatchDog voltageWatchDogB = new VoltageStateWatchDog();
-//	ResistorCurrentWatchdog currentWatchDog = new ResistorCurrentWatchdog();
 
     boolean switchState = false;
 
@@ -70,11 +50,9 @@ public class ElectricalSwitchElement extends SixNodeElement {
 
         WorldExplosion exp = new WorldExplosion(this).cableExplosion();
 
-        //	slowProcessList.add(currentWatchDog);
         slowProcessList.add(voltageWatchDogA);
         slowProcessList.add(voltageWatchDogB);
 
-        //currentWatchDog.set(switchResistor).setIAbsMax(this.descriptor.maximalPower/this.descriptor.nominalVoltage).set(exp);
         voltageWatchDogA.set(aLoad).setUNominalMirror(this.descriptor.nominalVoltage).set(exp);
         voltageWatchDogB.set(bLoad).setUNominalMirror(this.descriptor.nominalVoltage).set(exp);
     }
@@ -107,7 +85,6 @@ public class ElectricalSwitchElement extends SixNodeElement {
 
     @Override
     public ThermalLoad getThermalLoad(LRDU lrdu, int mask) {
-        //return thermalLoad;
         return null;
     }
 
@@ -155,7 +132,6 @@ public class ElectricalSwitchElement extends SixNodeElement {
 
     @Override
     public String thermoMeterString() {
-        //return Utils.plotCelsius("T:",thermalLoad.Tc);
         return "";
     }
 
@@ -164,11 +140,6 @@ public class ElectricalSwitchElement extends SixNodeElement {
         super.networkSerialize(stream);
         try {
             stream.writeBoolean(switchState);
-            stream.writeShort((short) (aLoad.getU() * NodeBase.networkSerializeUFactor));
-            stream.writeShort((short) (bLoad.getU() * NodeBase.networkSerializeUFactor));
-            stream.writeShort((short) (aLoad.getCurrent() * NodeBase.networkSerializeIFactor));
-            //stream.writeShort((short)(thermalLoad.Tc * NodeBase.networkSerializeTFactor));
-            stream.writeShort(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,21 +153,15 @@ public class ElectricalSwitchElement extends SixNodeElement {
 
     @Override
     public void initialize() {
-        //descriptor.thermal.applyTo(thermalLoad);
-
         descriptor.applyTo(aLoad);
         descriptor.applyTo(bLoad);
-
         switchResistor.setR(descriptor.electricalRs);
-
         setSwitchState(switchState);
     }
 
     @Override
     public boolean onBlockActivated(EntityPlayer entityPlayer, Direction side, float vx, float vy, float vz) {
         if (onBlockActivatedRotate(entityPlayer)) return true;
-        ItemStack currentItemStack = entityPlayer.getCurrentEquippedItem();
-
         if (EAU.multiMeterElement.checkSameItemStack(entityPlayer.getCurrentEquippedItem())) {
             return false;
         }
@@ -207,10 +172,8 @@ public class ElectricalSwitchElement extends SixNodeElement {
             return false;
         } else {
             setSwitchState(!switchState);
-            //playSoundEffect("random.click", 0.3F, 0.6F);
             play(new SoundCommand("random.click").mulVolume(0.3F, 0.6f).smallRange());
             return true;
         }
-        //front = LRDU.fromInt((front.toInt()+1)&3);
     }
 }

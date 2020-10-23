@@ -1,20 +1,5 @@
 package org.ja13.eau.sixnode.thermalcable;
 
-import org.ja13.eau.generic.GenericItemUsingDamageDescriptor;
-import org.ja13.eau.i18n.I18N;
-import org.ja13.eau.item.BrushDescriptor;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.node.NodeBase;
-import org.ja13.eau.node.six.SixNode;
-import org.ja13.eau.node.six.SixNodeDescriptor;
-import org.ja13.eau.node.six.SixNodeElement;
-import org.ja13.eau.sim.ElectricalLoad;
-import org.ja13.eau.sim.ThermalLoad;
-import org.ja13.eau.sim.nbt.NbtThermalLoad;
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog;
-import org.ja13.eau.sim.process.destruct.WorldExplosion;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -124,7 +109,6 @@ public class ThermalCableElement extends SixNodeElement {
         super.networkSerialize(stream);
         try {
             stream.writeByte((color << 4));
-            stream.writeShort((short) (thermalLoad.Tc * NodeBase.networkSerializeTFactor));
         } catch (IOException e) {
             e.printStackTrace();
         }

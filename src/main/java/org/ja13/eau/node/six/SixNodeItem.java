@@ -14,11 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
-import org.ja13.eau.EAU;
-import org.ja13.eau.misc.Coordonate;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.Utils;
 import org.lwjgl.opengl.GL11;
 
 public class SixNodeItem extends GenericItemBlockUsingDamage<SixNodeDescriptor> implements IItemRenderer {
@@ -92,7 +87,7 @@ public class SixNodeItem extends GenericItemBlockUsingDamage<SixNodeDescriptor> 
         int[] vect = new int[]{x, y, z};
         Direction.fromIntMinecraftSide(par5).applyTo(vect, 1);
         SixNodeDescriptor descriptor = getDescriptor(par7ItemStack);
-        if (descriptor.canBePlacedOnSide(par6EntityPlayer, new Coordonate(x, y, z, par1World), Direction.fromIntMinecraftSide(par5).getInverse()) == false) {
+        if (!descriptor.canBePlacedOnSide(par6EntityPlayer, new Coordonate(x, y, z, par1World), Direction.fromIntMinecraftSide(par5).getInverse())) {
             return false;
         }
         if (par1World.getBlock(vect[0], vect[1], vect[2]) == EAU.sixNodeBlock)

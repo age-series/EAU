@@ -1,36 +1,16 @@
 package org.ja13.eau.sixnode.electriccable
 
-import org.ja13.eau.EAU
-import org.ja13.eau.cable.CableRender
-import org.ja13.eau.cable.CableRenderDescriptor
-import org.ja13.eau.i18n.I18N
+import net.minecraft.entity.Entity
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.ItemStack
+import net.minecraft.util.DamageSource
 import org.ja13.eau.misc.Coordonate
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.LRDU
 import org.ja13.eau.misc.Utils
 import org.ja13.eau.misc.UtilsClient
 import org.ja13.eau.misc.VoltageTier
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.six.SixNode
-import org.ja13.eau.node.six.SixNodeDescriptor
-import org.ja13.eau.node.six.SixNodeElement
-import org.ja13.eau.node.six.SixNodeElementRender
-import org.ja13.eau.node.six.SixNodeEntity
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.IProcess
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.Resistor
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
-import org.ja13.eau.sim.nbt.NbtThermalLoad
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog
-import org.ja13.eau.sim.process.destruct.VoltageStateWatchDog
-import org.ja13.eau.sim.process.destruct.WorldExplosion
-import org.ja13.eau.sim.process.heater.ElectricalLoadHeatThermalLoad
-import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor
-import net.minecraft.entity.Entity
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
-import net.minecraft.util.DamageSource
+import org.ja13.eau.sim.mna.misc.MnaConst
 import org.lwjgl.opengl.GL11
 import java.util.*
 
@@ -42,7 +22,7 @@ class ElectricCableDescriptor(name: String, render: org.ja13.eau.cable.CableRend
             voltageTier = when {
                 insulationVoltage <= 0.0 -> {
                     // No insulation means no voltage limits!
-                    VoltageTier.LOW
+                    VoltageTier.NEUTRAL
                 }
                 insulationVoltage <= 300.0 -> {
                     VoltageTier.INDUSTRIAL
@@ -58,7 +38,7 @@ class ElectricCableDescriptor(name: String, render: org.ja13.eau.cable.CableRend
 
     init {
         this.render = render
-        this.electricalRs = 0.001
+        this.electricalRs = MnaConst.cableResistance
         this.voltageTier = VoltageTier.NEUTRAL
     }
 

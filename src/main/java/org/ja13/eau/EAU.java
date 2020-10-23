@@ -31,8 +31,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
-import org.ja13.eau.block.ArcClayBlock;
-import org.ja13.eau.block.ArcMetalBlock;
 import org.ja13.eau.cable.CableRenderDescriptor;
 import org.ja13.eau.client.ClientKeyHandler;
 import org.ja13.eau.client.SoundLoader;
@@ -98,10 +96,10 @@ import org.ja13.eau.server.OreRegenerate;
 import org.ja13.eau.server.PlayerManager;
 import org.ja13.eau.server.SaveConfig;
 import org.ja13.eau.server.ServerEventListener;
+import org.ja13.eau.sim.ElectricalLoad;
 import org.ja13.eau.sim.Simulator;
 import org.ja13.eau.sim.ThermalLoadInitializer;
 import org.ja13.eau.sim.mna.component.Resistor;
-import org.ja13.eau.sim.nbt.NbtElectricalLoad;
 import org.ja13.eau.simplenode.computerprobe.ComputerProbeBlock;
 import org.ja13.eau.simplenode.energyconverter.EnergyConverterElnToOtherBlock;
 import org.ja13.eau.sixnode.PortableNaNDescriptor;
@@ -126,6 +124,7 @@ import java.util.HashSet;
 
 import static org.ja13.eau.i18n.I18N.TR;
 import static org.ja13.eau.i18n.I18N.tr;
+import static org.ja13.eau.sim.mna.misc.MnaConst.cableResistance;
 
 @Mod(modid = EAU.MODID, name = EAU.NAME, version = "@VERSION@")
 public class EAU {
@@ -177,12 +176,10 @@ public class EAU {
     public static CreativeTabs cableTab;
     public static CreativeTabs blockTab;
     public static CreativeTabs itemTab;
-    //public static CreativeTabs oreTab;
 
     public static Item cableTabIcon;
     public static Item blockTabIcon;
     public static Item itemTabIcon;
-    //public static Item oreTabIcon;
 
     public static double fuelGeneratorTankCapacity = 20 * 60;
     public static GenericItemUsingDamageDescriptor multiMeterElement,
@@ -221,7 +218,6 @@ public class EAU {
     public static RecipesList maceratorRecipes = new RecipesList();
     public static RecipesList compressorRecipes = new RecipesList();
     public static RecipesList plateMachineRecipes = new RecipesList();
-    public static RecipesList arcFurnaceRecipes = new RecipesList();
     public static RecipesList magnetiserRecipes = new RecipesList();
     public static  double incandescentLampLife;
     public static  double economicLampLife;
@@ -239,8 +235,6 @@ public class EAU {
     public static OreBlock oreBlock;
     public static GhostBlock ghostBlock;
     public static LightBlock lightBlock;
-    public static ArcClayBlock arcClayBlock;
-    public static ArcMetalBlock arcMetalBlock;
     public static SixNodeItem sixNodeItem;
     public static TransparentNodeItem transparentNodeItem;
     public static OreItem oreItem;
@@ -280,7 +274,7 @@ public class EAU {
     public static OreRegenerate oreRegenerate;
     public static final Obj3DFolder obj = new Obj3DFolder();
     public static boolean oredictTungsten, oredictChips;
-    public static boolean genCopper, genLead, genTungsten, genCinnabar;
+    public static boolean genCopper, genLead, genTungsten;
     public static String dictTungstenOre, dictTungstenDust, dictTungstenIngot;
     public static String dictCheapChip, dictAdvancedChip;
     public static final ArrayList<OreScannerConfigElement> oreScannerConfig = new ArrayList<>();
@@ -291,10 +285,10 @@ public class EAU {
     public static boolean xRayScannerCanBeCrafted = true;
     public static boolean forceOreRegen;
     public static boolean explosionEnable;
-    public static boolean debugEnabled = false;  // Read from configuration file. Default is `false`.
-    public static boolean versionCheckEnabled = true; // Read from configuration file. Default is `true`.
-    public static boolean analyticsEnabled = true; // Read from configuration file. Default is `true`.
-    public static String playerUUID = null; // Read from configuration file. Default is `null`.
+    public static boolean debugEnabled = false;
+    public static boolean versionCheckEnabled = true;
+    public static boolean analyticsEnabled = true;
+    public static String playerUUID = null;
     public static double heatTurbinePowerFactor = 1;
     public static double solarPanelPowerFactor = 1;
     public static double windTurbinePowerFactor = 1;
@@ -387,8 +381,6 @@ public class EAU {
         itemTab = new GenericCreativeTab("EAU_Items_and_Tools", itemItemTab);
 
         oreBlock = (OreBlock) new OreBlock().setCreativeTab(blockTab).setBlockName("eau:OreEAU").setBlockTextureName("eau:OreEAU");
-        //arcClayBlock = new ArcClayBlock();
-        //arcMetalBlock = new ArcMetalBlock();
         sharedItem = (SharedItem) new SharedItem()
             .setCreativeTab(itemTab).setMaxStackSize(64)
             .setUnlocalizedName("sharedItem");
@@ -414,8 +406,6 @@ public class EAU {
         GameRegistry.registerBlock(sixNodeBlock, SixNodeItem.class, "EAU.SixNode");
         GameRegistry.registerBlock(transparentNodeBlock, TransparentNodeItem.class, "EAU.TransparentNode");
         GameRegistry.registerBlock(oreBlock, OreItem.class, "EAU.Ore");
-        //GameRegistry.registerBlock(arcClayBlock, ArcClayItemBlock.class, "Eln.arc_clay_block");
-        //GameRegistry.registerBlock(arcMetalBlock, ArcMetalItemBlock.class, "Eln.arc_metal_block");
         TileEntity.addMapping(TransparentNodeEntity.class, "EAUTransparentNodeEntity");
         TileEntity.addMapping(TransparentNodeEntityWithFluid.class, "EAUTransparentNodeEntityWF");
         // TileEntity.addMapping(TransparentNodeEntityWithSiededInv.class, "TransparentNodeEntityWSI");
@@ -431,8 +421,6 @@ public class EAU {
         SixNodeRegistry.Companion.register();
         TransparentNodeRegistry.Companion.register();
         ItemRegistry.Companion.register();
-        //OreDictionary.registerOre("blockAluminum", arcClayBlock);
-        //OreDictionary.registerOre("blockSteel", arcMetalBlock);
     }
 
     @EventHandler
@@ -540,16 +528,14 @@ public class EAU {
         OreScannerTasks.Companion.regenOreScannerFactors();
     }
 
-    public static double basicResistance = 0.001;
-
     public static double getSmallRs() {
-        return basicResistance;
+        return cableResistance;
     }
-    public static void applySmallRs(NbtElectricalLoad aLoad) {
-        aLoad.setRs(basicResistance);
+    public static void applySmallRs(ElectricalLoad aLoad) {
+        aLoad.setRs(cableResistance);
     }
     public static void applySmallRs(Resistor r) {
-        r.setR(basicResistance);
+        r.setR(cableResistance);
     }
     public boolean isDevelopmentRun() {
         return (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
