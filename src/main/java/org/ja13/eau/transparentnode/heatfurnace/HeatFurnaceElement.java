@@ -1,23 +1,5 @@
 package org.ja13.eau.transparentnode.heatfurnace;
 
-import org.ja13.eau.i18n.I18N;
-import org.ja13.eau.item.regulator.IRegulatorDescriptor;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.node.NodeBase;
-import org.ja13.eau.node.NodePeriodicPublishProcess;
-import org.ja13.eau.node.transparent.TransparentNode;
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
-import org.ja13.eau.node.transparent.TransparentNodeElement;
-import org.ja13.eau.node.transparent.TransparentNodeElementInventory;
-import org.ja13.eau.sim.ElectricalLoad;
-import org.ja13.eau.sim.ThermalLoad;
-import org.ja13.eau.sim.nbt.NbtElectricalGateInput;
-import org.ja13.eau.sim.nbt.NbtFurnaceProcess;
-import org.ja13.eau.sim.nbt.NbtThermalLoad;
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog;
-import org.ja13.eau.sim.process.destruct.WorldExplosion;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -149,7 +131,7 @@ public class HeatFurnaceElement extends TransparentNodeElement {
         try {
             stream.writeBoolean(getControlExternal());
             stream.writeBoolean(getTakeFuel());
-            stream.writeShort((short) (thermalLoad.Tc * NodeBase.networkSerializeTFactor));
+            stream.writeDouble(thermalLoad.Tc);
             stream.writeFloat((float) furnaceProcess.getGain());
             stream.writeFloat((float) regulator.getTarget());
             stream.writeShort((int) furnaceProcess.getP());

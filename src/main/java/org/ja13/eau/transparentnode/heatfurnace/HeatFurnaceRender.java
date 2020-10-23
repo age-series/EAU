@@ -1,14 +1,5 @@
 package org.ja13.eau.transparentnode.heatfurnace;
 
-import org.ja13.eau.misc.Coordonate;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.PhysicalInterpolator;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.node.NodeBase;
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
-import org.ja13.eau.node.transparent.TransparentNodeElementInventory;
-import org.ja13.eau.node.transparent.TransparentNodeElementRender;
-import org.ja13.eau.node.transparent.TransparentNodeEntity;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +7,6 @@ import org.ja13.eau.misc.Coordonate;
 import org.ja13.eau.misc.Direction;
 import org.ja13.eau.misc.PhysicalInterpolator;
 import org.ja13.eau.misc.Utils;
-import org.ja13.eau.node.NodeBase;
 import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
 import org.ja13.eau.node.transparent.TransparentNodeElementInventory;
 import org.ja13.eau.node.transparent.TransparentNodeElementRender;
@@ -89,8 +79,7 @@ public class HeatFurnaceRender extends TransparentNodeElementRender {
         try {
             controleExternal = stream.readBoolean();
             takeFuel = stream.readBoolean();
-
-            temperature = stream.readShort() / NodeBase.networkSerializeTFactor;
+            temperature = stream.readDouble();
             float readF;
             readF = stream.readFloat();
             if (gainSyncValue != readF || controleExternal) {
@@ -109,7 +98,6 @@ public class HeatFurnaceRender extends TransparentNodeElementRender {
 
             if (boot) {
                 coord.move(front);
-                //coord.move(front);
                 boot = false;
             }
         } catch (IOException e) {

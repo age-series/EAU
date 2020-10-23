@@ -5,16 +5,6 @@ import org.ja13.eau.misc.Direction;
 import org.ja13.eau.misc.LRDU;
 import org.ja13.eau.misc.RcInterpolator;
 import org.ja13.eau.misc.UtilsClient;
-import org.ja13.eau.node.NodeBase;
-import org.ja13.eau.node.six.SixNodeDescriptor;
-import org.ja13.eau.node.six.SixNodeElementRender;
-import org.ja13.eau.node.six.SixNodeEntity;
-import org.ja13.eau.cable.CableRenderDescriptor;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.RcInterpolator;
-import org.ja13.eau.misc.UtilsClient;
-import org.ja13.eau.node.NodeBase;
 import org.ja13.eau.node.six.SixNodeDescriptor;
 import org.ja13.eau.node.six.SixNodeElementRender;
 import org.ja13.eau.node.six.SixNodeEntity;
@@ -26,12 +16,10 @@ public class ElectricalSwitchRender extends SixNodeElementRender {
 
     ElectricalSwitchDescriptor descriptor;
 
-    double voltageAnode = 0, voltageCatode = 0, current = 0, temperature = 0;
 
     RcInterpolator interpol;
 
     boolean boot = true;
-    float switchAlpha = 0;
     boolean switchState;
 
     public ElectricalSwitchRender(SixNodeEntity tileEntity, Direction side, SixNodeDescriptor descriptor) {
@@ -80,10 +68,6 @@ public class ElectricalSwitchRender extends SixNodeElementRender {
         super.publishUnserialize(stream);
         try {
             switchState = stream.readBoolean();
-            voltageAnode = stream.readShort() / NodeBase.networkSerializeUFactor;
-            voltageCatode = stream.readShort() / NodeBase.networkSerializeUFactor;
-            current = stream.readShort() / NodeBase.networkSerializeIFactor;
-            temperature = stream.readShort() / NodeBase.networkSerializeTFactor;
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,15 +1,7 @@
 package org.ja13.eau.node;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import org.ja13.eau.EAU;
-import org.ja13.eau.GuiHandler;
-import org.ja13.eau.ghost.GhostBlock;
-import org.ja13.eau.misc.*;
-import org.ja13.eau.node.six.SixNode;
-import org.ja13.eau.sim.*;
-import org.ja13.eau.sound.SoundCommand;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,17 +16,18 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.ja13.eau.EAU;
 import org.ja13.eau.GuiHandler;
+import org.ja13.eau.ghost.GhostBlock;
 import org.ja13.eau.misc.Coordonate;
 import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.INBTTReady;
 import org.ja13.eau.misc.LRDU;
 import org.ja13.eau.misc.LRDUCubeMask;
 import org.ja13.eau.misc.Utils;
+import org.ja13.eau.node.six.SixNode;
 import org.ja13.eau.sim.ElectricalConnection;
 import org.ja13.eau.sim.ElectricalLoad;
-import org.ja13.eau.sim.IProcess;
 import org.ja13.eau.sim.ThermalConnection;
 import org.ja13.eau.sim.ThermalLoad;
+import org.ja13.eau.sound.SoundCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -55,10 +48,6 @@ public abstract class NodeBase {
     public static final int maskColorCareShift = 20;
     public static final int maskColorCareData = 1 << 20;
 
-    public static final double networkSerializeUFactor = 10.0;
-    public static final double networkSerializeIFactor = 100.0;
-    public static final double networkSerializeTFactor = 10.0;
-
     public byte neighborOpaque;
     public byte neighborWrapable;
 
@@ -66,15 +55,11 @@ public abstract class NodeBase {
 
     public Coordonate coordonate;
 
-    public ArrayList<NodeConnection> nodeConnectionList = new ArrayList<NodeConnection>(4);
-
-    private boolean initialized = false;
+    public ArrayList<NodeConnection> nodeConnectionList = new ArrayList<>(4);
 
     private boolean isAdded = false;
 
     private boolean needPublish = false;
-
-    // public static boolean canBePlacedOn(ItemStack itemStack,Direction side)
 
     public boolean mustBeSaved() {
         return true;
@@ -84,15 +69,12 @@ public abstract class NodeBase {
         return 0;
     }
 
-    public void networkUnserialize(DataInputStream stream, EntityPlayerMP player) {
-
-    }
+    public void networkUnserialize(DataInputStream stream, EntityPlayerMP player) {}
 
     public void notifyNeighbor() {
         coordonate.world().notifyBlockChange(coordonate.x, coordonate.y, coordonate.z, coordonate.getBlock());
     }
 
-    //public abstract Block getBlock();
     public abstract String getNodeUuid();
 
     public LRDUCubeMask lrduCubeMask = new LRDUCubeMask();
@@ -100,19 +82,14 @@ public abstract class NodeBase {
     public void neighborBlockRead() {
         int[] vector = new int[3];
         World world = coordonate.world();
-
         neighborOpaque = 0;
         neighborWrapable = 0;
         for (Direction direction : Direction.values()) {
             vector[0] = coordonate.x;
             vector[1] = coordonate.y;
             vector[2] = coordonate.z;
-
             direction.applyTo(vector, 1);
-
             Block b = world.getBlock(vector[0], vector[1], vector[2]);
-            if (b.isOpaqueCube())
-                ;
             neighborOpaque |= 1 << direction.getInt();
             if (isBlockWrappable(b, world, coordonate.x, coordonate.y, coordonate.z))
                 neighborWrapable |= 1 << direction.getInt();
@@ -160,9 +137,9 @@ public abstract class NodeBase {
     }
 
     public void physicalSelfDestruction(float explosionStrength) {
-        if (destructed == true) return;
+        if (destructed) return;
         destructed = true;
-        if (EAU.explosionEnable == false) explosionStrength = 0;
+        if (!EAU.explosionEnable) explosionStrength = 0;
         disconnect();
         coordonate.world().setBlockToAir(coordonate.x, coordonate.y, coordonate.z);
         NodeManager.instance.removeNode(this);
@@ -171,15 +148,11 @@ public abstract class NodeBase {
         }
     }
 
-    // NodeBaseTodo
     public void onBlockPlacedBy(Coordonate coordonate, Direction front, EntityLivingBase entityLiving, ItemStack itemStack) {
-        // this.entity = entity;
         this.coordonate = coordonate;
         neighborBlockRead();
         NodeManager.instance.addNode(this);
-
         initializeFromThat(front, entityLiving, itemStack);
-
         if (itemStack != null)
             Utils.println("Node::constructor( meta = " + itemStack.getItemDamage() + ")");
     }
@@ -205,9 +178,9 @@ public abstract class NodeBase {
         Utils.println("Node::onBreakBlock()");
     }
 
-    public static SoundCommand beepUploaded = new SoundCommand("eln:beep_accept_2").smallRange();
-    public static SoundCommand beepDownloaded = new SoundCommand("eln:beep_accept").smallRange();
-    public static SoundCommand beepError = new SoundCommand("eln:beep_error").smallRange();
+    public static SoundCommand beepUploaded = new SoundCommand("eau:beep_accept_2").smallRange();
+    public static SoundCommand beepDownloaded = new SoundCommand("eau:beep_accept").smallRange();
+    public static SoundCommand beepError = new SoundCommand("eau:beep_error").smallRange();
 
     public boolean onBlockActivated(EntityPlayer entityPlayer, Direction side, float vx, float vy, float vz) {
         if (!entityPlayer.worldObj.isRemote && entityPlayer.getCurrentEquippedItem() != null) {
@@ -232,7 +205,7 @@ public abstract class NodeBase {
                     str += str1;
                 if (str2 != null)
                     str += str2;
-                if (str.equals("") == false)
+                if (!str.equals(""))
                     Utils.addChatMessage(entityPlayer, str);
                 return true;
             }
@@ -278,8 +251,8 @@ public abstract class NodeBase {
         int mskA = nodeA.getSideConnectionMask(directionA, lrduA);
         int mskB = nodeB.getSideConnectionMask(directionB, lrduB);
         if (compareConnectionMask(mskA, mskB)) {
-            ElectricalConnection eCon = null;
-            ThermalConnection tCon = null;
+            ElectricalConnection eCon;
+            ThermalConnection tCon;
 
             NodeConnection nodeConnection = new NodeConnection(nodeA, directionA, lrduA, nodeB, directionB, lrduB);
 
@@ -414,18 +387,13 @@ public abstract class NodeBase {
     }
 
     public void connect() {
-
         if (isAdded) {
             disconnect();
         }
-
         connectInit();
         connectJob();
-
         isAdded = true;
-
         setNeedPublish(true);
-
     }
 
     public void disconnect() {
@@ -433,35 +401,22 @@ public abstract class NodeBase {
             Utils.println("Node destroy error already destroy");
             return;
         }
-
         disconnectJob();
-
         isAdded = false;
     }
 
-    public boolean nodeAutoSave() {
-        return true;
-    }
+
 
     public void readFromNBT(NBTTagCompound nbt) {
-
         coordonate.readFromNBT(nbt, "c");
-
         neighborOpaque = nbt.getByte("NBOpaque");
         neighborWrapable = nbt.getByte("NBWrap");
-
-        initialized = true;
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-
         coordonate.writeToNBT(nbt, "c");
-
-        int idx;
-
         nbt.setByte("NBOpaque", neighborOpaque);
         nbt.setByte("NBWrap", neighborWrapable);
-
     }
 
     public String multiMeterString(Direction side) {
@@ -484,13 +439,6 @@ public abstract class NodeBase {
         return needPublish;
     }
 
-    private boolean isINodeProcess(IProcess process) {
-        for (Class c : process.getClass().getInterfaces()) {
-            if (c == INBTTReady.class) return true;
-        }
-        return false;
-    }
-
     boolean needNotify = false;
 
     public void publishSerialize(DataOutputStream stream) {
@@ -500,17 +448,12 @@ public abstract class NodeBase {
     public void preparePacketForClient(DataOutputStream stream) {
         try {
             stream.writeByte(EAU.packetForClientNode);
-
             stream.writeInt(coordonate.x);
             stream.writeInt(coordonate.y);
             stream.writeInt(coordonate.z);
-
             stream.writeByte(coordonate.dimention);
-
             stream.writeUTF(getNodeUuid());
-
         } catch (IOException e) {
-
             e.printStackTrace();
         }
     }
@@ -519,67 +462,49 @@ public abstract class NodeBase {
         Utils.sendPacketToClient(bos, player);
     }
 
-
     public void sendPacketToAllClient(ByteArrayOutputStream bos) {
         sendPacketToAllClient(bos, 100000);
     }
 
     public void sendPacketToAllClient(ByteArrayOutputStream bos, double range) {
-        //Profiler p = new Profiler();
-
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-
         for (Object obj : server.getConfigurationManager().playerEntityList) {
-
             EntityPlayerMP player = (EntityPlayerMP) obj;
             WorldServer worldServer = MinecraftServer.getServer().worldServerForDimension(player.dimension);
             PlayerManager playerManager = worldServer.getPlayerManager();
             if (player.dimension != this.coordonate.dimention) continue;
             if (!playerManager.isPlayerWatchingChunk(player, coordonate.x / 16, coordonate.z / 16)) continue;
             if (coordonate.distanceTo(player) > range) continue;
-
             Utils.sendPacketToClient(bos, player);
         }
-
     }
 
     public ByteArrayOutputStream getPublishPacket() {
-
         ByteArrayOutputStream bos = new ByteArrayOutputStream(64);
         DataOutputStream stream = new DataOutputStream(bos);
-
         try {
-
             stream.writeByte(EAU.packetNodeSingleSerialized);
-
             stream.writeInt(coordonate.x);
             stream.writeInt(coordonate.y);
             stream.writeInt(coordonate.z);
             stream.writeByte(coordonate.dimention);
-
             stream.writeUTF(getNodeUuid());
-
             publishSerialize(stream);
-
             return bos;
         } catch (IOException e) {
-
             e.printStackTrace();
-
         }
         return null;
     }
 
     public void publishToAllPlayer() {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-
         for (Object obj : server.getConfigurationManager().playerEntityList) {
             EntityPlayerMP player = (EntityPlayerMP) obj;
             WorldServer worldServer = MinecraftServer.getServer().worldServerForDimension(player.dimension);
             PlayerManager playerManager = worldServer.getPlayerManager();
             if (player.dimension != this.coordonate.dimention) continue;
             if (!playerManager.isPlayerWatchingChunk(player, coordonate.x / 16, coordonate.z / 16)) continue;
-
             Utils.sendPacketToClient(getPublishPacket(), player);
         }
         if (needNotify) {
@@ -615,9 +540,7 @@ public abstract class NodeBase {
 
     public abstract void initializeFromNBT();
 
-    public void globalBoot() {
-
-    }
+    public void globalBoot() {}
 
     public void needPublish() {
         setNeedPublish(true);

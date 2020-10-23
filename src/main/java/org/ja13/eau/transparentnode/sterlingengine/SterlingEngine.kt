@@ -319,7 +319,6 @@ class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNode
         factorLimiter.step(deltaT)
         rotation += voltage.toFloat() * ratio
         while(rotation > 360) rotation -= 360
-        println("$rotation $voltage $ratio")
         super.refresh(deltaT)
     }
 
@@ -332,6 +331,5 @@ class SterlingEngineRender(entity: org.ja13.eau.node.transparent.TransparentNode
         }
         factorLimiter.target = 0.0
         voltage = stream.readDouble()
-        println("received voltage $voltage")
     }
 }

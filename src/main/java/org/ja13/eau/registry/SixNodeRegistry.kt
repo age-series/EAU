@@ -2,8 +2,6 @@ package org.ja13.eau.registry
 
 import org.ja13.eau.EAU
 import org.ja13.eau.misc.Direction
-import org.ja13.eau.misc.FunctionTableYProtect
-import org.ja13.eau.misc.IFunction
 import org.ja13.eau.misc.VoltageTier
 import org.ja13.eau.misc.series.SeriesMap
 import org.ja13.eau.node.six.SixNodeDescriptor
@@ -631,46 +629,23 @@ class SixNodeRegistry {
 
         private fun registerPassiveComponent(id: Int) {
             var name: String
-            var function: IFunction
-            val baseFunction = FunctionTableYProtect(doubleArrayOf(0.0, 0.01, 0.03, 0.1, 0.2, 0.4, 0.8, 1.2), 1.0,
-                0.0, 5.0)
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "10A Diode")
-                function = FunctionTableYProtect(doubleArrayOf(0.0, 0.1, 0.3,
-                    1.0, 2.0, 4.0, 8.0, 12.0), 1.0, 0.0, 100.0)
                 val desc = DiodeDescriptor(
                     name,
-                    function,
-                    10.0,
-                    1.0, 10.0,
+                    10.0,10.0,
                     EAU.sixNodeThermalLoadInitializer.copy(),
-                    EAU.smallInsulationLowCurrentCopperCable,
                     EAU.obj.getObj("PowerElectricPrimitives"))
                 registerSixNode(id, 0, desc)
             }
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "25A Diode")
-                function = FunctionTableYProtect(doubleArrayOf(0.0, 0.25,
-                    0.75, 2.5, 5.0, 10.0, 20.0, 30.0), 1.0, 0.0, 100.0)
                 val desc = DiodeDescriptor(
                     name,
-                    function,
-                    25.0,
-                    1.0, 25.0,
+                    25.0,25.0,
                     EAU.sixNodeThermalLoadInitializer.copy(),
-                    EAU.smallInsulationLowCurrentCopperCable,
                     EAU.obj.getObj("PowerElectricPrimitives"))
                 registerSixNode(id, 1, desc)
-            }
-            run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Signal Diode")
-                function = baseFunction.duplicate(1.0, 0.1)
-                val desc = DiodeDescriptor(name,
-                    function, 0.1,
-                    1.0, 0.1,
-                    EAU.sixNodeThermalLoadInitializer.copy(), EAU.smallInsulationLowCurrentCopperCable,
-                    EAU.obj.getObj("PowerElectricPrimitives"))
-                registerSixNode(id, 2, desc)
             }
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Power Capacitor")
