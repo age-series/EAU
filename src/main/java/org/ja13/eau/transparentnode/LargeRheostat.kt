@@ -1,25 +1,18 @@
 package org.ja13.eau.transparentnode
 
-import org.ja13.eau.i18n.I18N.tr
-import org.ja13.eau.misc.*
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.transparent.*
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.IProcess
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.Resistor
-import org.ja13.eau.sim.mna.misc.MnaConst
-import org.ja13.eau.sim.nbt.NbtElectricalGateInput
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
-import org.ja13.eau.sim.nbt.NbtThermalLoad
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog
-import org.ja13.eau.sim.process.destruct.WorldExplosion
-import org.ja13.eau.sim.process.heater.ResistorHeatThermalLoad
-import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor
-import org.ja13.eau.transparentnode.heatsink.HeatsinkDescriptor
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraftforge.client.IItemRenderer
+import org.ja13.eau.i18n.I18N.tr
+import org.ja13.eau.misc.BlackBodyColor
+import org.ja13.eau.misc.BlackBodyPower
+import org.ja13.eau.misc.BlackBodyTemperature
+import org.ja13.eau.misc.Direction
+import org.ja13.eau.misc.LRDU
+import org.ja13.eau.misc.SlewLimiter
+import org.ja13.eau.misc.Utils
+import org.ja13.eau.misc.VoltageTier
+import org.ja13.eau.transparentnode.heatsink.HeatsinkDescriptor
 import org.lwjgl.opengl.GL11
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -30,7 +23,7 @@ class LargeRheostatDescriptor(name: String, val heatsink: HeatsinkDescriptor, va
     org.ja13.eau.node.transparent.TransparentNodeDescriptor(name, LargeRheostatElement::class.java, LargeRheostatRender::class.java) {
 
     init {
-        voltageTier = VoltageTier.INDUSTRIAL
+        voltageTier = VoltageTier.NEUTRAL
     }
 
     override fun addInfo(itemStack: ItemStack, entityPlayer: EntityPlayer, list: MutableList<String>) {

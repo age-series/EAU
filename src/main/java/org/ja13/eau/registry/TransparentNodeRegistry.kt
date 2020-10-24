@@ -346,17 +346,24 @@ class TransparentNodeRegistry {
             val stdEfficiency = 1.0 - 2.0 / 50.0
             EAU.batteryVoltageFunctionTable = voltageFunction
             run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Cost Oriented Battery")
-                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name, "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable,
+                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "12V Lead Acid Battery")
+                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(
+                    name,
+                    "BatteryBig",
+                    EAU.smallInsulationMediumCurrentCopperCable,
                     0.5,
-                    true, true,
+                    true,
+                    true,
                     voltageFunction,
                     stdU,
                     stdP * 1.2,
                     0.00,
                     stdP,
-                    stdDischargeTime * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
-                    heatTIme, 60.0, (-100).toDouble(),
+                    stdDischargeTime * EAU.batteryCapacityFactor,
+                    stdEfficiency,
+                    EAU.stdBatteryHalfLife,
+                    heatTIme,
+                    60.0, (-100).toDouble(),
                     "Cheap battery"
                 )
                 desc.setRenderSpec("lowcost")
@@ -364,25 +371,23 @@ class TransparentNodeRegistry {
                 registerTransparentNode(id, 0, desc)
             }
             run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Capacity Oriented Battery")
+                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "24V Lead Acid Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction,
-                    stdU / 4, stdP / 2 * 1.2, 0.000,
-                    stdP / 2, stdDischargeTime * 8 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
-                    heatTIme, 60.0, (-100).toDouble(),
-                    "the battery"
-                )
-                desc.setRenderSpec("capacity")
-                desc.setCurrentDrop(desc.electricalU * 1.2, desc.electricalStdP * 1.0)
-                registerTransparentNode(id, 1, desc)
-            }
-            run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Voltage Oriented Battery")
-                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction, stdU * 4,
-                    stdP * 1.2, 0.000,
-                    stdP, stdDischargeTime * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
-                    heatTIme, 60.0, (-100).toDouble(),
+                    "BatteryBig",
+                    EAU.smallInsulationMediumCurrentCopperCable,
+                    0.5,
+                    true,
+                    true,
+                    voltageFunction,
+                    24.0,
+                    stdP * 1.2,
+                    0.000,
+                    stdP,
+                    stdDischargeTime * EAU.batteryCapacityFactor,
+                    stdEfficiency,
+                    EAU.stdBatteryHalfLife,
+                    heatTIme,
+                    60.0, (-100).toDouble(),
                     "the battery"
                 )
                 desc.setRenderSpec("highvoltage")
@@ -390,12 +395,23 @@ class TransparentNodeRegistry {
                 registerTransparentNode(id, 2, desc)
             }
             run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Current Oriented Battery")
+                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "12V High Current Lead Acid Battery")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, true, voltageFunction, stdU,
-                    stdP * 1.2 * 4, 0.000,
-                    stdP * 4, stdDischargeTime / 6 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife,
-                    heatTIme, 60.0, (-100).toDouble(),
+                    "BatteryBig",
+                    EAU.smallInsulationMediumCurrentCopperCable,
+                    0.5,
+                    true,
+                    true,
+                    voltageFunction,
+                    stdU,
+                    stdP * 1.2 * 4,
+                    0.000,
+                    stdP * 4,
+                    stdDischargeTime / 6 * EAU.batteryCapacityFactor,
+                    stdEfficiency,
+                    EAU.stdBatteryHalfLife,
+                    heatTIme,
+                    60.0, (-100).toDouble(),
                     "the battery"
                 )
                 desc.setRenderSpec("current")
@@ -403,42 +419,28 @@ class TransparentNodeRegistry {
                 registerTransparentNode(id, 3, desc)
             }
             run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Life Oriented Battery")
+                // 6 copper layers, 1.1v per stack, 0.25m^2 cell size. Penny battery has 1.39 joules, 5x10^-4 watts
+                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Voltaic Pile")
                 val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, false, voltageFunction, stdU,
-                    stdP * 1.2, 0.000,
-                    stdP, stdDischargeTime * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife * 8,
-                    heatTIme, 60.0, (-100).toDouble(),
-                    "the battery"
-                )
-                desc.setRenderSpec("life")
-                desc.setCurrentDrop(desc.electricalU * 1.2, desc.electricalStdP * 1.0)
-                registerTransparentNode(id, 4, desc)
-            }
-            run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Single-use Battery")
-                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 1.0, false, false, voltageFunction, stdU,
-                    stdP * 1.2 * 2, 0.000,
-                    stdP * 2, stdDischargeTime / 4 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife * 8,
-                    heatTIme, 60.0, (-100).toDouble(),
+                    "BatteryBig",
+                    EAU.smallInsulationMediumCurrentCopperCable,
+                    1.0,
+                    false,
+                    false,
+                    voltageFunction,
+                    1.1 * 6,
+                    stdP * 1.2 * 2,
+                    0.000,
+                    stdP * 2,
+                    stdDischargeTime / 4 * EAU.batteryCapacityFactor,
+                    stdEfficiency,
+                    EAU.stdBatteryHalfLife * 8,
+                    heatTIme,
+                    60.0, (-100).toDouble(),
                     "the battery"
                 )
                 desc.setRenderSpec("coal")
                 registerTransparentNode(id, 5, desc)
-            }
-            run {
-                name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "Experimental Battery")
-                val desc = org.ja13.eau.transparentnode.battery.BatteryDescriptor(name,
-                    "BatteryBig", EAU.smallInsulationMediumCurrentCopperCable, 0.5, true, false, voltageFunction, stdU * 2,
-                    stdP * 1.2 * 8, 0.025,
-                    stdP * 8, stdDischargeTime / 4 * EAU.batteryCapacityFactor, stdEfficiency, EAU.stdBatteryHalfLife * 8,
-                    heatTIme, 60.0, (-100).toDouble(),
-                    "You were unable to fix the power leaking problem, though."
-                )
-                desc.setRenderSpec("highvoltage")
-                desc.setCurrentDrop(desc.electricalU * 1.2, desc.electricalStdP * 1.0)
-                registerTransparentNode(id, 6, desc)
             }
         }
 

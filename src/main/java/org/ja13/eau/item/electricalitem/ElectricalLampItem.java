@@ -1,11 +1,6 @@
 package org.ja13.eau.item.electricalitem;
 
-import org.ja13.eau.item.electricalinterface.IItemEnergyBattery;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.misc.UtilsClient;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -13,8 +8,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 import org.ja13.eau.i18n.I18N;
+import org.ja13.eau.item.electricalinterface.IItemEnergyBattery;
+import org.ja13.eau.misc.Utils;
+import org.ja13.eau.misc.UtilsClient;
+import org.ja13.eau.misc.VoltageTier;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 
 import static org.ja13.eau.i18n.I18N.tr;
@@ -43,6 +41,7 @@ public class ElectricalLampItem extends LampItem implements IItemEnergyBattery {
         on = new ResourceLocation("eau", "textures/items/" + name.replace(" ", "").toLowerCase() + "on.png");
         off = new ResourceLocation("eau", "textures/items/" + name.replace(" ", "").toLowerCase() + "off.png");
         //	off = new ResourceLocation("eln", "/model/StoneFurnace/all.png");
+        voltageTier = VoltageTier.NEUTRAL;
     }
 
     @Override

@@ -1,10 +1,5 @@
 package org.ja13.eau.sixnode.energymeter;
 
-import org.ja13.eau.misc.Obj3D;
-import org.ja13.eau.misc.Obj3D.Obj3DPart;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.misc.VoltageTier;
-import org.ja13.eau.node.six.SixNodeDescriptor;
 import net.minecraft.item.ItemStack;
 import org.ja13.eau.misc.Obj3D;
 import org.ja13.eau.misc.Utils;
@@ -43,7 +38,7 @@ public class EnergyMeterDescriptor extends SixNodeDescriptor {
 
         pinDistance = Utils.getSixNodePinDistance(base);
 
-        voltageTier = VoltageTier.TTL;
+        voltageTier = VoltageTier.NEUTRAL;
     }
 
     @Override

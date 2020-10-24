@@ -1,22 +1,12 @@
 package org.ja13.eau.transparentnode.thermaldissipatoractive;
 
-import org.ja13.eau.EAU;
-import org.ja13.eau.misc.Obj3D;
-import org.ja13.eau.misc.Obj3D.Obj3DPart;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.misc.VoltageTier;
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
-import org.ja13.eau.sim.ElectricalLoad;
-import org.ja13.eau.sim.ThermalLoad;
-import org.ja13.eau.sim.mna.component.Resistor;
-import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.ja13.eau.EAU;
 import org.ja13.eau.i18n.I18N;
 import org.ja13.eau.misc.Obj3D;
 import org.ja13.eau.misc.Utils;
-import org.ja13.eau.misc.VoltageTier;
+import org.ja13.eau.misc.VoltageTierHelpers;
 import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
 import org.ja13.eau.sim.ElectricalLoad;
 import org.ja13.eau.sim.ThermalLoad;
@@ -25,8 +15,6 @@ import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static org.ja13.eau.i18n.I18N.tr;
 
 public class ThermalDissipatorActiveDescriptor extends TransparentNodeDescriptor {
 
@@ -66,7 +54,7 @@ public class ThermalDissipatorActiveDescriptor extends TransparentNodeDescriptor
             rot = obj.getPart("rot");
         }
 
-        voltageTier = VoltageTier.NEUTRAL;
+        voltageTier = VoltageTierHelpers.Companion.fromVoltage(nominalElectricalU);
     }
 
     double warmLimit, coolLimit;

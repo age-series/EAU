@@ -1,27 +1,11 @@
 package org.ja13.eau.gridnode.electricalpole
 
-import org.ja13.eau.EAU
 import org.ja13.eau.gridnode.GridDescriptor
 import org.ja13.eau.gridnode.GridElement
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.LRDU
 import org.ja13.eau.misc.Utils
 import org.ja13.eau.misc.VoltageTier
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.NodePeriodicPublishProcess
-import org.ja13.eau.node.transparent.TransparentNode
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.VoltageSource
-import org.ja13.eau.sim.mna.process.TransformerInterSystemProcess
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
-import org.ja13.eau.sim.nbt.NbtThermalLoad
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog
-import org.ja13.eau.sim.process.destruct.VoltageStateWatchDog
-import org.ja13.eau.sim.process.destruct.WorldExplosion
-import org.ja13.eau.sim.process.heater.ElectricalLoadHeatThermalLoad
-
 import java.io.DataOutputStream
 import java.io.IOException
 
@@ -50,7 +34,7 @@ class ElectricalPoleElement(node: org.ja13.eau.node.transparent.TransparentNode,
         electricalLoad.setCanBeSimplifiedByLine(true)
         // Most of the resistance is in the cable, which is handled in GridLink.
         // We put some of it here, thereby allowing the thermal watchdog to work.
-        desc.cableDescriptor.applyTo(electricalLoad, 0.0001)
+        desc.cableDescriptor.applyTo(electricalLoad, 0.01)
         desc.cableDescriptor.applyTo(thermalLoad)
         electricalLoadList.add(electricalLoad)
 

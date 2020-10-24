@@ -1,14 +1,8 @@
 package org.ja13.eau.transparentnode.festive
 
 import org.ja13.eau.misc.Direction
-import org.ja13.eau.misc.Obj3D
 import org.ja13.eau.misc.UtilsClient
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor
-import org.ja13.eau.node.transparent.TransparentNodeElementRender
-import org.ja13.eau.node.transparent.TransparentNodeEntity
-import net.minecraft.init.Blocks
-import net.minecraft.util.AxisAlignedBB
-import net.minecraft.world.World
+import org.ja13.eau.misc.VoltageTier
 import org.lwjgl.opengl.GL11
 import java.io.DataInputStream
 import java.io.IOException
@@ -21,6 +15,7 @@ class StringLightsDescriptor(name: String, val obj: org.ja13.eau.misc.Obj3D): or
         this.name = name
         base = obj.getPart("Lights_Cube.009")
         light = obj.getPart("LightOn_Cube.002")
+        voltageTier = VoltageTier.NEUTRAL
     }
 
     fun draw(front: Direction, powered: Boolean) {

@@ -1,10 +1,7 @@
 package org.ja13.eau.transparentnode.heatsink
 
-import org.ja13.eau.EAU
-import org.ja13.eau.i18n.I18N
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.LRDU
-import org.ja13.eau.misc.Obj3D
 import org.ja13.eau.misc.RcInterpolator
 import org.ja13.eau.misc.Utils.plotAmpere
 import org.ja13.eau.misc.Utils.plotCelsius
@@ -12,21 +9,6 @@ import org.ja13.eau.misc.Utils.plotPower
 import org.ja13.eau.misc.Utils.plotValue
 import org.ja13.eau.misc.Utils.plotVolt
 import org.ja13.eau.misc.VoltageTierHelpers
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.transparent.TransparentNode
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor
-import org.ja13.eau.node.transparent.TransparentNodeElement
-import org.ja13.eau.node.transparent.TransparentNodeElementRender
-import org.ja13.eau.node.transparent.TransparentNodeEntity
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.IProcess
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.Resistor
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
-import org.ja13.eau.sim.nbt.NbtThermalLoad
-import org.ja13.eau.sim.process.destruct.ThermalLoadWatchDog
-import org.ja13.eau.sim.process.destruct.VoltageStateWatchDog
-import org.ja13.eau.sim.process.destruct.WorldExplosion
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraftforge.client.IItemRenderer.ItemRenderType

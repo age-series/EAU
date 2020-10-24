@@ -1,16 +1,8 @@
 package org.ja13.eau.transparentnode.festive
 
 import org.ja13.eau.misc.Direction
-import org.ja13.eau.misc.LRDU
-import org.ja13.eau.misc.Obj3D
 import org.ja13.eau.misc.UtilsClient
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.transparent.*
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.Resistor
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
-import net.minecraft.entity.player.EntityPlayer
+import org.ja13.eau.misc.VoltageTier
 import org.lwjgl.opengl.GL11
 import java.io.DataInputStream
 import java.io.IOException
@@ -26,6 +18,7 @@ class HolidayCandleDescriptor(name: String, val obj: org.ja13.eau.misc.Obj3D): o
         base = obj.getPart("CandleLamp_Cylinder.001")
         glass = obj.getPart("Glass_Cylinder.000")
         light = obj.getPart("LampOn_Cylinder.002")
+        voltageTier = VoltageTier.NEUTRAL
     }
 
     fun draw(front: Direction, powered: Boolean) {

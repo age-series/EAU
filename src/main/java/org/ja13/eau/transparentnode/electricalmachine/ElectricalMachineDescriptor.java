@@ -1,15 +1,5 @@
 package org.ja13.eau.transparentnode.electricalmachine;
 
-import org.ja13.eau.cable.CableRenderDescriptor;
-import org.ja13.eau.misc.*;
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
-import org.ja13.eau.sim.ElectricalLoad;
-import org.ja13.eau.sim.ElectricalStackMachineProcess;
-import org.ja13.eau.sim.ThermalLoad;
-import org.ja13.eau.sim.ThermalLoadInitializer;
-import org.ja13.eau.sim.mna.component.Resistor;
-import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor;
-import org.ja13.eau.sound.SoundCommand;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -31,8 +21,6 @@ import org.ja13.eau.sound.SoundCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static org.ja13.eau.i18n.I18N.tr;
 
 public class ElectricalMachineDescriptor extends TransparentNodeDescriptor {
     public RecipesList recipe = new RecipesList();
@@ -65,7 +53,11 @@ public class ElectricalMachineDescriptor extends TransparentNodeDescriptor {
         resistorR = nominalU * nominalU / nominalP;
         this.recipe = recipe;
 
-        voltageTier = VoltageTier.NEUTRAL;
+        if (nominalU < 50) {
+            voltageTier = VoltageTier.LOW;
+        } else {
+            voltageTier = VoltageTier.LOW_HOUSEHOLD;
+        }
     }
 
     public ElectricalMachineDescriptor setRunningSound(String runningSound) {
