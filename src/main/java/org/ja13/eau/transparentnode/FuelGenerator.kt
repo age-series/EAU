@@ -17,7 +17,7 @@ import org.ja13.eau.misc.Obj3D
 import org.ja13.eau.misc.SlewLimiter
 import org.ja13.eau.misc.Utils
 import org.ja13.eau.misc.UtilsClient
-import org.ja13.eau.misc.VoltageTier
+import org.ja13.eau.misc.VoltageTierHelpers
 import org.ja13.eau.misc.preserveMatrix
 import org.ja13.eau.node.published
 import org.ja13.eau.sound.LoopedSound
@@ -58,7 +58,7 @@ class FuelGeneratorDescriptor(name: String, internal val obj: Obj3D?, internal v
     internal val fuels = FuelRegistry.gasolineList
 
     init {
-        voltageTier = VoltageTier.NEUTRAL
+        voltageTier = VoltageTierHelpers.fromVoltage(nominalVoltage)
     }
 
     fun draw(on: Boolean = false) {

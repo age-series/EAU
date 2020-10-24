@@ -10,9 +10,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
-import org.ja13.eau.misc.DescriptorBase;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.Utils;
 
 public abstract class SimpleNodeBlock extends BlockContainer {
 

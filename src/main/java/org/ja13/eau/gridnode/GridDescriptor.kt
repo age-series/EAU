@@ -1,17 +1,13 @@
 package org.ja13.eau.gridnode
 
-import org.ja13.eau.misc.Direction
-import org.ja13.eau.misc.Obj3D
-import org.ja13.eau.misc.preserveMatrix
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor
-import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor
 import net.minecraft.item.ItemStack
 import net.minecraftforge.client.IItemRenderer
+import org.ja13.eau.misc.Direction
+import org.ja13.eau.misc.VoltageTier
+import org.ja13.eau.misc.preserveMatrix
 import org.lwjgl.opengl.GL11
-
-import java.util.ArrayList
-
-import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL11.glRotatef
+import java.util.*
 
 open class GridDescriptor(name: String, private val obj: org.ja13.eau.misc.Obj3D, ElementClass: Class<*>, RenderClass: Class<*>, val cableTexture: String, val cableDescriptor: org.ja13.eau.sixnode.genericcable.GenericCableDescriptor, val connectRange: Int) : org.ja13.eau.node.transparent.TransparentNodeDescriptor(name, ElementClass, RenderClass) {
     val plus = ArrayList<org.ja13.eau.misc.Obj3D.Obj3DPart>()
@@ -33,6 +29,7 @@ open class GridDescriptor(name: String, private val obj: org.ja13.eau.misc.Obj3D
             this.gnd.add(gnd)
             i++
         }
+        voltageTier = VoltageTier.NEUTRAL
     }
 
     fun draw(idealRenderingAngle: Float) {

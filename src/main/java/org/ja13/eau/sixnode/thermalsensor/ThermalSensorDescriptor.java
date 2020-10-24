@@ -1,11 +1,5 @@
 package org.ja13.eau.sixnode.thermalsensor;
 
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.Obj3D;
-import org.ja13.eau.misc.Obj3D.Obj3DPart;
-import org.ja13.eau.misc.VoltageTier;
-import org.ja13.eau.node.six.SixNodeDescriptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.ja13.eau.i18n.I18N;
@@ -17,8 +11,6 @@ import org.ja13.eau.node.six.SixNodeDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static org.ja13.eau.i18n.I18N.tr;
 
 public class ThermalSensorDescriptor extends SixNodeDescriptor {
 
@@ -38,7 +30,7 @@ public class ThermalSensorDescriptor extends SixNodeDescriptor {
             main = obj.getPart("main");
             adapter = obj.getPart("adapter");
         }
-        voltageTier = VoltageTier.TTL;
+        voltageTier = VoltageTier.NEUTRAL;
     }
 
     @Override
@@ -64,5 +56,10 @@ public class ThermalSensorDescriptor extends SixNodeDescriptor {
     @Override
     public LRDU getFrontFromPlace(Direction side, EntityPlayer player) {
         return super.getFrontFromPlace(side, player).inverse();
+    }
+
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+        return true;
     }
 }

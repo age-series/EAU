@@ -1,12 +1,8 @@
 package org.ja13.eau.transparentnode.festive
 
-import org.ja13.eau.ghost.GhostGroup
 import org.ja13.eau.misc.Direction
-import org.ja13.eau.misc.Obj3D
 import org.ja13.eau.misc.UtilsClient
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor
-import org.ja13.eau.node.transparent.TransparentNodeElementRender
-import org.ja13.eau.node.transparent.TransparentNodeEntity
+import org.ja13.eau.misc.VoltageTier
 import org.lwjgl.opengl.GL11
 import java.io.DataInputStream
 import java.io.IOException
@@ -29,6 +25,7 @@ class ChristmasTreeDescriptor(name: String, val obj: org.ja13.eau.misc.Obj3D): o
         gg.addElement(1, 3, 0)
         gg.removeElement(0, 0, 0)
         ghostGroup = gg
+        voltageTier = VoltageTier.NEUTRAL
     }
 
     fun draw(front: Direction, delta: Int, powered: Boolean) {

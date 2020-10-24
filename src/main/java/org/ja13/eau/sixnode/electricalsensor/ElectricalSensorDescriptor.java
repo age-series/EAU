@@ -1,11 +1,5 @@
 package org.ja13.eau.sixnode.electricalsensor;
 
-import org.ja13.eau.EAU;
-import org.ja13.eau.misc.Direction;
-import org.ja13.eau.misc.LRDU;
-import org.ja13.eau.misc.Obj3D.Obj3DPart;
-import org.ja13.eau.misc.VoltageTier;
-import org.ja13.eau.node.six.SixNodeDescriptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.ja13.eau.EAU;
@@ -19,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.ja13.eau.i18n.I18N.tr;
-
 public class ElectricalSensorDescriptor extends SixNodeDescriptor {
 
     boolean voltageOnly;
@@ -33,7 +25,7 @@ public class ElectricalSensorDescriptor extends SixNodeDescriptor {
         this.voltageOnly = voltageOnly;
         main = EAU.obj.getPart(modelName, "main");
 
-        voltageTier = VoltageTier.TTL;
+        voltageTier = VoltageTier.NEUTRAL;
     }
 
     void draw() {
@@ -56,5 +48,10 @@ public class ElectricalSensorDescriptor extends SixNodeDescriptor {
     @Override
     public LRDU getFrontFromPlace(Direction side, EntityPlayer player) {
         return super.getFrontFromPlace(side, player).inverse();
+    }
+
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+        return true;
     }
 }

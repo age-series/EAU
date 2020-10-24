@@ -697,7 +697,7 @@ class SixNodeRegistry {
             run {
                 name = org.ja13.eau.i18n.I18N.TR_NAME(org.ja13.eau.i18n.I18N.Type.NONE, "High Current Switch")
                 val desc = ElectricalSwitchDescriptor(name, EAU.smallInsulationHighCurrentRender,
-                    EAU.obj.getObj("HighVoltageSwitch"), 13_200.0, 13_200.0 * 10, 0.1, 13_200.0, 10000.0 * 12, EAU.cableThermalLoadInitializer.copy(), false)
+                    EAU.obj.getObj("HighVoltageSwitch"), 13_200.0, 13_200.0 * 10, 0.1, 20_000.0, 10000.0 * 12, EAU.cableThermalLoadInitializer.copy(), false)
                 registerSixNode(id, 2, desc)
             }
         }

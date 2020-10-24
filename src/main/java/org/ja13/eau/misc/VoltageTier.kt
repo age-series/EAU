@@ -1,6 +1,5 @@
 package org.ja13.eau.misc
 
-import org.ja13.eau.EAU
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.IItemRenderer
 import org.lwjgl.opengl.GL11
@@ -41,9 +40,9 @@ class VoltageTierHelpers {
             }
         }
 
-        open fun setGLColor(tier: VoltageTier) {
+        fun setGLColor(tier: VoltageTier) {
             when (tier) {
-                VoltageTier.NEUTRAL -> return
+                VoltageTier.NEUTRAL -> GL11.glColor3f(0.9f, 0.9f, 0.9f)
                 VoltageTier.TTL -> GL11.glColor3f(.80f, .87f, .82f)
                 VoltageTier.LOW -> GL11.glColor3f(.80f, .87f, .82f)
                 VoltageTier.LOW_HOUSEHOLD -> GL11.glColor3f(.96f, .80f, .56f)

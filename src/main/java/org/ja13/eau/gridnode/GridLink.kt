@@ -1,19 +1,12 @@
 package org.ja13.eau.gridnode
 
-import org.ja13.eau.EAU
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
 import org.ja13.eau.misc.Coordonate
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.INBTTReady
 import org.ja13.eau.misc.UserError
-import org.ja13.eau.node.NodeManager
-import org.ja13.eau.sim.ElectricalConnection
-import org.ja13.eau.sim.mna.misc.MnaConst
-import org.ja13.eau.sixnode.genericcable.GenericCableDescriptor
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
-
-import java.util.HashSet
-import java.util.Optional
+import java.util.*
 
 /**
  * Created by svein on 23/08/15.
@@ -31,7 +24,7 @@ class GridLink : INBTTReady {
     private var ae = Optional.empty<GridElement>()
     private var be = Optional.empty<GridElement>()
     private var ab: org.ja13.eau.sim.ElectricalConnection? = null
-    private var rs = org.ja13.eau.sim.mna.misc.MnaConst.highImpedance
+    private var rs = org.ja13.eau.sim.mna.misc.MnaConst.cableResistance
 
     constructor(a: Coordonate, b: Coordonate, `as`: Direction, bs: Direction, cable: ItemStack, rs: Double) {
         this.rs = rs

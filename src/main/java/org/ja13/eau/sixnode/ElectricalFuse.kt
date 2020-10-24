@@ -1,21 +1,16 @@
 package org.ja13.eau.sixnode
 
-import org.ja13.eau.EAU
-import org.ja13.eau.generic.GenericItemUsingDamageDescriptor
-import org.ja13.eau.i18n.I18N
-import org.ja13.eau.item.ElectricalFuseDescriptor
-import org.ja13.eau.misc.*
-import org.ja13.eau.node.NodeBase
-import org.ja13.eau.node.six.*
-import org.ja13.eau.sim.ElectricalLoad
-import org.ja13.eau.sim.IProcess
-import org.ja13.eau.sim.ThermalLoad
-import org.ja13.eau.sim.mna.component.Resistor
-import org.ja13.eau.sim.nbt.NbtElectricalLoad
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.client.IItemRenderer
+import org.ja13.eau.generic.GenericItemUsingDamageDescriptor
+import org.ja13.eau.item.ElectricalFuseDescriptor
+import org.ja13.eau.misc.Direction
+import org.ja13.eau.misc.LRDU
+import org.ja13.eau.misc.Utils
+import org.ja13.eau.misc.VoltageTier
+import org.ja13.eau.misc.VoltageTierHelpers
 import org.lwjgl.opengl.GL11
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -29,7 +24,7 @@ class ElectricalFuseHolderDescriptor(name: String, obj: org.ja13.eau.misc.Obj3D)
     private val fuseOk = obj.getPart("FuseOk")
 
     init {
-        voltageTier = VoltageTier.TTL
+        voltageTier = VoltageTier.NEUTRAL
     }
 
     override fun handleRenderType(item: ItemStack?, type: IItemRenderer.ItemRenderType?) = true

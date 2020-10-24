@@ -21,19 +21,11 @@ import org.ja13.eau.misc.VoltageTier
 import org.ja13.eau.misc.VoltageTierHelpers
 import java.util.*
 
-open class GenericItemUsingDamageDescriptor {
+open class GenericItemUsingDamageDescriptor @JvmOverloads constructor(@JvmField var name: String, iconName: String = name) {
 
-    @JvmOverloads
-    constructor(name: String, iconName: String = name) {
-        setDefaultIcon(iconName)
-        this.name = name
-        byName[name] = this
-    }
-
-    var IconName: String? = null
+    var iconName: String? = null
     open var icon: IIcon? = null
-    @JvmField
-    var name: String
+
     @JvmField
     var voltageTier = VoltageTier.NEUTRAL
     @JvmField
@@ -41,8 +33,8 @@ open class GenericItemUsingDamageDescriptor {
     @JvmField
     var parentItemDamage = 0
     fun setDefaultIcon(name: String) {
-        IconName = "eau:" + name.replace(" ".toRegex(), "").toLowerCase()
-        ImageList.itemTextures.add("$IconName.png")
+        iconName = "eau:" + name.replace(" ".toRegex(), "").toLowerCase()
+        ImageList.itemTextures.add("$iconName.png")
     }
 
     open fun getDefaultNBT(): NBTTagCompound? = null
@@ -58,7 +50,7 @@ open class GenericItemUsingDamageDescriptor {
 
     @SideOnly(value = Side.CLIENT)
     fun updateIcons(iconRegister: IIconRegister) {
-        icon = iconRegister.registerIcon(IconName)
+        icon = iconRegister.registerIcon(iconName)
     }
 
     open fun getName(stack: ItemStack): String? {
@@ -104,7 +96,6 @@ open class GenericItemUsingDamageDescriptor {
     open fun renderItem(type: ItemRenderType?, item: ItemStack?, vararg data: Any?) {
         if (icon == null) return
         VoltageTierHelpers.drawIconBackground(type, voltageTier)
-        // remove "eln:" to add the full path replace("eln:", "textures/blocks/") + ".png";
         val icon = icon!!.iconName.substring(4)
         UtilsClient.drawIcon(type!!, ResourceLocation("eau", "textures/items/$icon.png"))
     }
@@ -158,6 +149,11 @@ open class GenericItemUsingDamageDescriptor {
             val desc = getDescriptor(stack) ?: return null
             return if (!extendClass.isAssignableFrom(desc.javaClass)) null else desc
         }
+    }
+
+    init {
+        setDefaultIcon(iconName)
+        byName[name] = this
     }
 
 }

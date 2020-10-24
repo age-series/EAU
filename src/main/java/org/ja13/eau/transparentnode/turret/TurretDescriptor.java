@@ -1,12 +1,5 @@
 package org.ja13.eau.transparentnode.turret;
 
-import org.ja13.eau.EAU;
-import org.ja13.eau.misc.Obj3D;
-import org.ja13.eau.misc.Obj3D.Obj3DPart;
-import org.ja13.eau.misc.Utils;
-import org.ja13.eau.misc.UtilsClient;
-import org.ja13.eau.misc.VoltageTier;
-import org.ja13.eau.node.transparent.TransparentNodeDescriptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.ja13.eau.EAU;
@@ -21,8 +14,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
 import java.util.List;
-
-import static org.ja13.eau.i18n.I18N.tr;
 
 public class TurretDescriptor extends TransparentNodeDescriptor {
     class Properties {
@@ -56,9 +47,9 @@ public class TurretDescriptor extends TransparentNodeDescriptor {
             gunArmAnimationSpeed = 3;
             gunDisarmAnimationSpeed = 0.5f;
             gunAimAnimationSpeed = 100;
-            minimalVoltage = 600;
+            minimalVoltage = 400;
             minimalVoltageHysteresisFactor = 0.1;
-            maximalVoltage = 1050;
+            maximalVoltage = 600;
             basePower = 25;
             chargePower = 1000;
             entityDetectionInterval = 0.25;

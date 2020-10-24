@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
+import net.minecraftforge.client.IItemRenderer
 import org.ja13.eau.misc.Coordonate
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.LRDU
@@ -72,6 +73,10 @@ class ElectricCableDescriptor(name: String, render: org.ja13.eau.cable.CableRend
         super.addInfo(itemStack, entityPlayer, list)
         list.add(org.ja13.eau.i18n.I18N.tr("Nominal Ratings:"))
         list.add("  " + org.ja13.eau.i18n.I18N.tr("Serial resistance: %1$\u2126", Utils.plotValue(electricalRs * 2)))
+    }
+
+    override fun handleRenderType(item: ItemStack?, type: IItemRenderer.ItemRenderType?): Boolean {
+        return true
     }
 }
 
