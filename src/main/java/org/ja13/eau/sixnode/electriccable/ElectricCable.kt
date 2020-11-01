@@ -5,6 +5,8 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
 import net.minecraftforge.client.IItemRenderer
+import net.minecraft.block.Block
+import net.minecraft.entity.EntityLiving
 import org.ja13.eau.misc.Coordonate
 import org.ja13.eau.misc.Direction
 import org.ja13.eau.misc.LRDU
@@ -14,6 +16,14 @@ import org.ja13.eau.misc.VoltageTier
 import org.ja13.eau.sim.mna.misc.MnaConst
 import org.lwjgl.opengl.GL11
 import java.util.*
+import net.minecraft.init.Blocks
+import net.minecraft.item.Item.getItemFromBlock
+import net.minecraft.entity.item.EntityItem
+import net.minecraft.entity.monster.EntityCreeper
+import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.world.World
+
+
 
 class ElectricCableDescriptor(name: String, render: org.ja13.eau.cable.CableRenderDescriptor, val material: String = "Copper"): org.ja13.eau.sixnode.genericcable.GenericCableDescriptor(name, ElectricCableElement::class.java, ElectricCableRender::class.java) {
 
@@ -192,6 +202,8 @@ class ElectricCableRender(tileEntity: org.ja13.eau.node.six.SixNodeEntity, side:
     }
 }
 
+
+
 class PlayerHarmer(val electricalLoad: org.ja13.eau.sim.ElectricalLoad, private val insulationVoltage: Double, val location: Coordonate): org.ja13.eau.sim.IProcess {
 
     private fun harmFunction(distance: Double) = 1.0 - ( distance / 3.0)
@@ -199,13 +211,30 @@ class PlayerHarmer(val electricalLoad: org.ja13.eau.sim.ElectricalLoad, private 
     override fun process(time: Double) {
         val harmLevel = Math.max(0.0, (electricalLoad.u - 50 - insulationVoltage) / 500.0)
         val objects = location.world().getEntitiesWithinAABB(Entity::class.java, location.getAxisAlignedBB(4))
+
         for(obj in objects) {
+
             val ent = obj as Entity
+            if(ent is EntityLiving || ent is EntityPlayerMP){
             val distance = location.distanceTo(ent)
             val pain = (harmFunction(distance) * harmLevel).toFloat()
-            if (distance < 3 && pain > 0.05) {
+            if(distance < 1 && pain > 0.05 && ent.onGround){ //if they're touching the block, deal extra effects
+                if(ent is EntityCreeper){ location.world().createExplosion(ent,ent.posX,ent.posY+0.3,ent.posZ,1f,true); ent.setDead() }
+                ent.hurtResistantTime = 0
                 ent.attackEntityFrom(DamageSource("Cable"), pain)
+                if(ent.isEntityAlive) {
+                    ent.setVelocity(Math.min(location.directionOf(ent).x*pain,1.0), Math.min(0.5*pain,3.0), Math.min((location.directionOf(ent).z*pain),1.0))
+                }
             }
+            else if (distance < 3 && pain > 0.05 && ent.hurtResistantTime == 0 && ent.onGround) { //otherwise deal less punishing effects
+                ent.attackEntityFrom(DamageSource("Cable"), pain)
+                ent.hurtResistantTime = 15
+                if(ent is EntityCreeper && pain > 1){ location.world().createExplosion(ent,ent.posX,ent.posY+0.3,ent.posZ,1f,true); ent.setDead() }
+                if(ent.isEntityAlive){
+                    ent.setVelocity(0.0,Math.min(pain/2.0,0.65),0.0) //makes the zapped entity jump straight up based on pain, within limit
+                }
+            }
+        }
         }
     }
 }

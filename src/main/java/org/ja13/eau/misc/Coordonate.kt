@@ -1,7 +1,6 @@
 package org.ja13.eau.misc
 
 import cpw.mods.fml.common.FMLCommonHandler
-import org.ja13.eau.node.NodeBlockEntity
 import net.minecraft.block.Block
 import net.minecraft.entity.Entity
 import net.minecraft.nbt.NBTTagCompound
@@ -10,6 +9,8 @@ import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.Vec3
 import net.minecraft.world.World
 import net.minecraftforge.common.DimensionManager
+import org.lwjgl.util.vector.Vector3f
+import javax.vecmath.Vector3d
 
 class Coordonate : INBTTReady {
     @JvmField
@@ -143,7 +144,22 @@ class Coordonate : INBTTReady {
     }
 
     fun distanceTo(e: Entity): Double {
-        return Math.abs(e.posX - (x + 0.5)) + Math.abs(e.posY - (y + 0.5)) + Math.abs(e.posZ - (z + 0.5))
+        //return Math.abs(e.posX - (x + 0.5)) + Math.abs(e.posY - (y + 0.5)) + Math.abs(e.posZ - (z + 0.5))
+        return Math.sqrt(Math.pow((e.posX - (x+0.5)),2.0) + Math.pow((e.posY - (y+0.5)),2.0) + Math.pow((e.posZ - (z+0.5)),2.0))
+    }
+
+    fun directionOf(e: Entity): Vector3d { //returns a normalized vector (normalized means vector with only direction)
+
+        //val normalized = e.lookVec //help I don't know how to create a vector. This will work for now.
+        val normalized = Vector3d(0.0,0.0,0.0)
+        normalized.x = (e.posX - (x+0.5))
+        normalized.y = (e.posY - (y+0.5))
+        normalized.z = (e.posZ - (z+0.5))
+        val magnitude = Math.sqrt(Math.pow((normalized.x),2.0) + Math.pow((normalized.y),2.0) + Math.pow((normalized.z),2.0))
+        normalized.x = normalized.x/magnitude
+        normalized.y = normalized.y/magnitude
+        normalized.z = normalized.z/magnitude
+        return normalized
     }
 
     val meta: Int
