@@ -189,10 +189,10 @@ class CraftingRegistry {
             recipeCompressor()
             recipePlateMachine()
             recipeMagnetizer()
-            recipeFuelBurnerItem()
+            recipeFuelBurnerItem()*/
             recipeDisplays()
             recipeECoal()
-            recipeGridDevices()*/
+            recipeGridDevices()
         }
 
         private fun recipeMaceratorModOres() {
@@ -2281,51 +2281,82 @@ class CraftingRegistry {
                 'C', findItemStack("Combustion Chamber"),
                 'c', findItemStack("Copper Thermal Cable"))
         }
+         */
 
         private fun recipeDisplays() {
             addRecipe(findItemStack("Digital Display", 1),
+                listOf(
                 "   ",
                 "rrr",
-                "iii",
-                'r', ItemStack(Items.redstone),
-                'i', findItemStack("Iron Cable")
+                "iii"
+                ),
+                mapOf(
+                    Pair('r', "redstone"),
+                    Pair('i', "Iron Cable")
+                )
             )
             addRecipe(findItemStack("Nixie Tube", 1),
+                listOf(
                 " g ",
                 "grg",
-                "iii",
-                'g', ItemStack(Blocks.glass_pane),
-                'r', ItemStack(Items.redstone),
-                'i', findItemStack("Iron Cable")
+                "iii"
+                ),
+                mapOf(
+                    Pair('g', "Glass Pane"),
+                    Pair('r', "redstone"),
+                    Pair('i', "Iron Cable")
+                )
             )
         }
 
         private fun recipeECoal() {
             addRecipe(findItemStack("E-Coal Helmet"),
-                "PPP",
-                "PCP",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
-            addRecipe(findItemStack("E-Coal Boots"),
-                " C ",
-                "P P",
-                "P P",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
-            addRecipe(findItemStack("E-Coal Chestplate"),
-                "P P",
-                "PCP",
-                "PPP",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
-            addRecipe(findItemStack("E-Coal Leggings"),
-                "PPP",
-                "PCP",
-                "P P",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
-        }
+                listOf(
+                    "PPP",
+                    "PCP"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
 
+            addRecipe(findItemStack("E-Coal Boots"),
+                listOf(
+                    " C ",
+                    "P P",
+                    "P P"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
+
+            addRecipe(findItemStack("E-Coal Chestplate"),
+                listOf(
+                    "P P",
+                    "PCP",
+                    "PPP"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
+
+            addRecipe(findItemStack("E-Coal Leggings"),
+                listOf(
+                    "PPP",
+                    "PCP",
+                    "P P"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
+        }
         private fun recipeGridDevices() {
             var poleRecipes = 0
             for (oreName in arrayOf(
@@ -2334,11 +2365,15 @@ class CraftingRegistry {
                 "ingotSteel")) {
                 if (EAU.oreNames.contains(oreName)) {
                     addRecipe(findItemStack("Utility Pole"),
-                        "WWW",
-                        "IWI",
-                        " W ",
-                        'W', "logWood",
-                        'I', oreName
+                        listOf(
+                            "WWW",
+                            "IWI",
+                            " W "
+                        ),
+                        mapOf(
+                            Pair('W', "logWood"),
+                            Pair('I', "oreName")
+                        )
                     )
                     poleRecipes++
                 }
@@ -2346,21 +2381,29 @@ class CraftingRegistry {
             if (poleRecipes == 0) {
                 // Really?
                 addRecipe(findItemStack("Utility Pole"),
-                    "WWW",
-                    "IWI",
-                    " W ",
-                    'I', "ingotIron",
-                    'W', "logWood"
+                    listOf(
+                        "WWW",
+                        "IWI",
+                        " W "
+                    ),
+                    mapOf(
+                        Pair('I', "ingotIron"),
+                        Pair('W', "logWood")
+                    )
                 )
             }
             addRecipe(findItemStack("Utility Pole w/DC-DC Converter"),
-                "HHH",
-                " TC",
-                " PH",
-                'P', findItemStack("Utility Pole"),
-                'H', findItemStack("High Voltage Cable"),
-                'C', findItemStack("Optimal Ferromagnetic Core"),
-                'T', findItemStack("DC-DC Converter")
+                listOf(
+                    "HHH",
+                    " TC",
+                    " PH"
+                ),
+                mapOf(
+                    Pair('P', "Utility Pole"),
+                    Pair('H', "High Voltage Cable"),
+                    Pair('C', "Optimal Ferromagnetic Core"),
+                    Pair('T', "DC-DC Converter")
+                )
             )
 
             // I don't care what you think, if your modpack lacks steel then you don't *need* this much power.
@@ -2375,23 +2418,30 @@ class CraftingRegistry {
                 val ingotType = "ingot$type"
                 if (EAU.oreNames.contains(blockType)) {
                     addRecipe(findItemStack("Transmission Tower"),
-                        "ii ",
-                        "mi ",
-                        " B ",
-                        Character.valueOf('i'), ingotType,
-                        Character.valueOf('B'), blockType,
-                        Character.valueOf('m'), findItemStack("Machine Block"))
+                        listOf(
+                            "ii ",
+                            "mi ",
+                            " B "
+                        ),
+                        mapOf(
+                            Pair('i',ingotType),
+                            Pair('B',blockType),
+                            Pair('m', "Machine Block")
+                        )
+                    )
                     addRecipe(findItemStack("Grid DC-DC Converter"),
-                        "i i",
-                        "mtm",
-                        "imi",
-                        Character.valueOf('i'), ingotType,
-                        Character.valueOf('t'), findItemStack("DC-DC Converter"),
-                        Character.valueOf('m'), findItemStack("Advanced Machine Block"))
+                        listOf(
+                            "i i",
+                            "mtm",
+                            "imi"
+                        ),
+                        mapOf(
+                            Pair('i',ingotType),
+                            Pair('t',"DC-DC Converter"),
+                            Pair('m',"Advanced Machine Block"))
+                    )
                 }
             }
         }
-
-         */
     }
 }
