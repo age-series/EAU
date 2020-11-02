@@ -135,7 +135,7 @@ public class EAU {
     public final static String URL = "https://eau.ja13.org";
     public final static String UPDATE_URL = "https://github.com/jrddunbr/EAU/releases";
     public final static String SRC_URL = "https://github.com/jrddunbr/EAU";
-    public final static String[] AUTHORS = {"jrddunbr,Omega Haxors"};
+    public final static String[] AUTHORS = {"jrddunbr","Omega Haxors"};
     public static final String channelName = "EAU";
 
     // The instance of your mod that Forge uses.

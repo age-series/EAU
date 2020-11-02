@@ -144,8 +144,8 @@ class Coordonate : INBTTReady {
     }
 
     fun distanceTo(e: Entity): Double {
-        //return Math.abs(e.posX - (x + 0.5)) + Math.abs(e.posY - (y + 0.5)) + Math.abs(e.posZ - (z + 0.5))
-        return Math.sqrt(Math.pow((e.posX - (x+0.5)),2.0) + Math.pow((e.posY - (y+0.5)),2.0) + Math.pow((e.posZ - (z+0.5)),2.0))
+        return Math.abs(e.posX - (x + 0.5)) + Math.abs(e.posY - (y + 0.5)) + Math.abs(e.posZ - (z + 0.5))
+        //return Math.sqrt(Math.pow((e.posX - (x+0.5)),2.0) + Math.pow((e.posY - (y+0.5)),2.0) + Math.pow((e.posZ - (z+0.5)),2.0))
     }
 
     fun directionOf(e: Entity): Vector3d { //returns a normalized vector (normalized means vector with only direction)

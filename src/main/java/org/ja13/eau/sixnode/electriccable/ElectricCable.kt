@@ -211,9 +211,7 @@ class PlayerHarmer(val electricalLoad: org.ja13.eau.sim.ElectricalLoad, private 
     override fun process(time: Double) {
         val harmLevel = Math.max(0.0, (electricalLoad.u - 50 - insulationVoltage) / 500.0)
         val objects = location.world().getEntitiesWithinAABB(Entity::class.java, location.getAxisAlignedBB(4))
-
         for(obj in objects) {
-
             val ent = obj as Entity
             if(ent is EntityLiving || ent is EntityPlayerMP){
             val distance = location.distanceTo(ent)
