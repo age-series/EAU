@@ -1,15 +1,15 @@
 package org.ja13.eau.crafting
 
 import cpw.mods.fml.common.registry.GameRegistry
-import org.ja13.eau.EAU
-import org.ja13.eau.misc.Utils
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraft.item.crafting.IRecipe
+import net.minecraft.launchwrapper.LogWrapper
 import net.minecraftforge.oredict.OreDictionary
 import net.minecraftforge.oredict.ShapedOreRecipe
-import net.minecraftforge.oredict.ShapelessOreRecipe
+import org.ja13.eau.EAU
+import org.ja13.eau.misc.Utils
 
 class CraftingRegistry {
     companion object {
@@ -18,41 +18,43 @@ class CraftingRegistry {
             OreDictionary.registerOre(name, ore)
         }
 
-        fun addRecipe(output: ItemStack?, recipeRows: List<String>, typeKey: Map<Char, ItemStack?>) {
+        fun addRecipe(output: ItemStack?, recipeRows: List<String>, typeKey: Map<Char, String>) {
             if (output != null) {
-                for (key in typeKey) {
+                val typeKeyItems = typeKey.map {
+                    Pair(it.key, findItemStack(it.value))
+                }.toMap()
+                for (key in typeKeyItems) {
                     if  (key.value == null) {
-                        println("Key value is null in ${key.key}")
+                        Utils.println("Key value is null in ${key.key}")
                         return
                     }
                     if (!recipeRows.joinToString().contains(key.key)) {
-                        println("Key ${key.key} not in recipe rows: ${recipeRows.joinToString()}")
+                        Utils.println("Key ${key.key} not in recipe rows: ${recipeRows.joinToString()}")
                         return
                     }
                 }
                 for (char in recipeRows.joinToString()) {
-                    if (!typeKey.keys.contains(char)) {
-                        System.out.println("Recipe does not have key for ${char} in ${typeKey.keys}")
+                    if (!typeKeyItems.keys.contains(char)) {
+                        Utils.println("Recipe does not have key for ${char} in ${typeKeyItems.keys}")
                         return
                     }
                 }
-                GameRegistry.addRecipe(ShapedOreRecipe(output, arrayOf(*recipeRows.toTypedArray(), *(typeKey.entries.toTypedArray()))))
+                GameRegistry.addRecipe(ShapedOreRecipe(output, arrayOf(*recipeRows.toTypedArray(), *(typeKeyItems.entries.toTypedArray()))))
             }
         }
 
-
-        fun addRecipe(output: ItemStack?, vararg params: Any) {
-            if (output != null)
-                GameRegistry.addRecipe(ShapedOreRecipe(output, *params))
-        }
-
-        fun addShapelessRecipe(output: ItemStack?, vararg params: Any) {
-            if (output != null)
-                GameRegistry.addRecipe(ShapelessOreRecipe(output, *params))
+        fun addShapelessRecipe(output: ItemStack?, inputs: List<ItemStack?>) {
+            if (output != null) {
+                if (null in inputs) {
+                    Utils.println("One of the inputs to this shapeless recipe for ${output.displayName} is null!")
+                    return
+                }
+                GameRegistry.addShapelessRecipe(output, inputs)
+            }
         }
 
         fun findItemStack(name: String, stackSize: Int): ItemStack? {
-            var stack = GameRegistry.findItemStack("Eln", name, stackSize)
+            var stack = GameRegistry.findItemStack("EAU", name, stackSize)
             if (stack == null) {
                 stack = EAU.dictionnaryOreFromMod[name]
                 if (stack != null)
@@ -78,25 +80,25 @@ class CraftingRegistry {
         fun checkRecipe() {
             Utils.println("No recipe for ")
             // TODO: Re-evaluate types nullity here.
-            for (d in org.ja13.eau.EAU.sixNodeItem.subItemList.values) {
+            for (d in EAU.sixNodeItem.subItemList.values) {
                 val stack = d?.newItemStack()
                 if (!recipeExists(stack)) {
                     Utils.println("  " + d?.name)
                 }
             }
-            for (d in org.ja13.eau.EAU.transparentNodeItem.subItemList.values) {
+            for (d in EAU.transparentNodeItem.subItemList.values) {
                 val stack = d?.newItemStack()
                 if (!recipeExists(stack)) {
                     Utils.println("  " + d?.name)
                 }
             }
-            for (d in org.ja13.eau.EAU.sharedItem.subItemList.values) {
+            for (d in EAU.sharedItem.subItemList.values) {
                 val stack = d.newItemStack()
                 if (!recipeExists(stack)) {
                     Utils.println("  " + d.name)
                 }
             }
-            for (d in org.ja13.eau.EAU.sharedItemStackOne.subItemList.values) {
+            for (d in EAU.sharedItemStackOne.subItemList.values) {
                 val stack = d.newItemStack()
                 if (!recipeExists(stack)) {
                     Utils.println("  " + d.name)
@@ -118,10 +120,10 @@ class CraftingRegistry {
         }
         
         fun registerCrafting() {
-            /*
             recipeEnergyConverter()
             recipeComputerProbe()
             recipeArmor()
+            /*
             recipeTool()
             recipeGround()
             recipeElectricalSource()
@@ -167,8 +169,6 @@ class CraftingRegistry {
             recipeHeatingCorp()
             recipeRegulatorItem()
             recipeLampItem()
-            recipeProtection()
-            recipeCombustionChamber()
             recipeFerromagneticCore()
             recipeDust()
             recipeElectricalMotor()
@@ -185,7 +185,6 @@ class CraftingRegistry {
             recipeElectricalTool()
             recipePortableCapacitor()
             recipeFurnace()
-            recipeArcFurnace()
             recipeMacerator()
             recipeCompressor()
             recipePlateMachine()
@@ -193,10 +192,9 @@ class CraftingRegistry {
             recipeFuelBurnerItem()
             recipeDisplays()
             recipeECoal()
-            recipeGridDevices()
-             */
+            recipeGridDevices()*/
         }
-/*
+
         private fun recipeMaceratorModOres() {
             val f = 4000f
             recipeMaceratorModOre(f * 3f, "oreCertusQuartz", "dustCertusQuartz", 3)
@@ -227,102 +225,144 @@ class CraftingRegistry {
             val output = outOres[0].copy()
             output.stackSize = outputCount
             LogWrapper.info("Adding mod recipe from $inputName to $outputName")
-            for (input in inOres) {
-                Eln.maceratorRecipes.addRecipe(Recipe(input, output, f))
-            }
-        }*/
+            //for (input in inOres) {
+                //EAU.maceratorRecipes.addRecipe(Recipe(input, output, f))
+            //}
+        }
 
-        /*
         private fun recipeEnergyConverter() {
-            if (Eln.ElnToOtherEnergyConverterEnable) {
-                addRecipe(ItemStack(Eln.elnToOtherBlockLvu),
-                    "III",
-                    "cCR",
-                    "III",
-                    'C', Eln.dictCheapChip,
-                    'c', findItemStack("Low Voltage Cable"),
-                    'I', findItemStack("Iron Cable"),
-                    'R', "ingotCopper")
-                addRecipe(ItemStack(Eln.elnToOtherBlockMvu),
-                    "III",
-                    "cCR",
-                    "III",
-                    'C', Eln.dictCheapChip,
-                    'c', findItemStack("Medium Voltage Cable"),
-                    'I', findItemStack("Iron Cable"),
-                    'R', Eln.dictTungstenIngot)
-                addRecipe(ItemStack(Eln.elnToOtherBlockHvu),
-                    "III",
-                    "cCR",
-                    "III",
-                    'C', Eln.dictAdvancedChip,
-                    'c', findItemStack("High Voltage Cable"),
-                    'I', findItemStack("Iron Cable"),
-                    'R', ItemStack(Items.gold_ingot))
+            if (EAU.ElnToOtherEnergyConverterEnable) {
+                addRecipe(ItemStack(EAU.elnToOtherBlockLvu),
+                    listOf(
+                        "III",
+                        "cCR",
+                        "III"
+                    ),
+                    mapOf(
+                        Pair('C', EAU.dictCheapChip),
+                        Pair('c', "Copper Cable"),
+                        Pair('I', "Iron Cable"),
+                        Pair('R', "ingotCopper")
+                    )
+                )
+                addRecipe(ItemStack(EAU.elnToOtherBlockMvu),
+                    listOf(
+                        "III",
+                        "cCR",
+                        "III"
+                    ),
+                    mapOf(
+                        Pair('C', EAU.dictCheapChip),
+                        Pair('c', "Copper Cable"),
+                        Pair('I', "Iron Cable"),
+                        Pair('R', EAU.dictTungstenIngot)
+                    )
+                )
+                addRecipe(ItemStack(EAU.elnToOtherBlockHvu),
+                    listOf(
+                        "III",
+                        "cCR",
+                        "III"
+                    ),
+                    mapOf(
+                        Pair('C', EAU.dictAdvancedChip),
+                        Pair('c', "Copper Cable"),
+                        Pair('I', "Iron Cable"),
+                        Pair('R', "ingotGold")
+                    )
+                )
             }
         }
 
         private fun recipeComputerProbe() {
-            if (Eln.ComputerProbeEnable) {
-                addRecipe(ItemStack(Eln.computerProbeBlock),
-                    "cIw",
-                    "ICI",
-                    "WIc",
-                    'C', Eln.dictAdvancedChip,
-                    'c', findItemStack("Signal Cable"),
-                    'I', findItemStack("Iron Cable"),
-                    'w', findItemStack("Wireless Signal Receiver"),
-                    'W', findItemStack("Wireless Signal Transmitter"))
+            if (EAU.ComputerProbeEnable) {
+                addRecipe(ItemStack(EAU.computerProbeBlock),
+                    listOf(
+                        "cIw",
+                        "ICI",
+                        "WIc"
+                    ),
+                    mapOf(
+                        Pair('C', EAU.dictAdvancedChip),
+                        Pair('c', "Copper Cable"),
+                        Pair('I', "Iron cable"),
+                        Pair('w', "Wireless Signal Receiver"),
+                        Pair('W', "Wireless Signal Transmitter")
+                    )
+                )
             }
         }
 
         private fun recipeArmor() {
-            addRecipe(ItemStack(Eln.helmetCopper),
-                "CCC",
-                "C C",
-                'C', "ingotCopper")
-            addRecipe(ItemStack(Eln.plateCopper),
-                "C C",
-                "CCC",
-                "CCC",
-                'C', "ingotCopper")
-            addRecipe(ItemStack(Eln.legsCopper),
-                "CCC",
-                "C C",
-                "C C",
-                'C', "ingotCopper")
-            addRecipe(ItemStack(Eln.bootsCopper),
-                "C C",
-                "C C",
-                'C', "ingotCopper")
+
+            addRecipe(ItemStack(EAU.helmetCopper),
+                listOf(
+                    "CCC",
+                    "C C",
+                    "   "
+                ),
+                mapOf(
+                    Pair('C', "ingotCopper")
+                )
+            )
+            addRecipe(ItemStack(EAU.plateCopper),
+                listOf(
+                    "C C",
+                    "CCC",
+                    "CCC"
+                ),
+                mapOf(
+                    Pair('C', "ingotCopper")
+                )
+            )
+            addRecipe(ItemStack(EAU.legsCopper),
+                listOf(
+                    "CCC",
+                    "C C",
+                    "C C"
+                ),
+                mapOf(
+                Pair('C', "ingotCopper")
+                )
+            )
+            addRecipe(ItemStack(EAU.bootsCopper),
+                listOf(
+                    "C C",
+                    "C C"
+                ),
+                mapOf(
+                    Pair('C', "ingotCopper")
+                )
+            )
         }
 
+        /*
         private fun recipeTool() {
-            addRecipe(ItemStack(Eln.shovelCopper),
+            addRecipe(ItemStack(EAU.shovelCopper),
                 "i",
                 "s",
                 "s",
                 'i', "ingotCopper",
                 's', ItemStack(Items.stick))
-            addRecipe(ItemStack(Eln.axeCopper),
+            addRecipe(ItemStack(EAU.axeCopper),
                 "ii",
                 "is",
                 " s",
                 'i', "ingotCopper",
                 's', ItemStack(Items.stick))
-            addRecipe(ItemStack(Eln.hoeCopper),
+            addRecipe(ItemStack(EAU.hoeCopper),
                 "ii",
                 " s",
                 " s",
                 'i', "ingotCopper",
                 's', ItemStack(Items.stick))
-            addRecipe(ItemStack(Eln.pickaxeCopper),
+            addRecipe(ItemStack(EAU.pickaxeCopper),
                 "iii",
                 " s ",
                 " s ",
                 'i', "ingotCopper",
                 's', ItemStack(Items.stick))
-            addRecipe(ItemStack(Eln.swordCopper),
+            addRecipe(ItemStack(EAU.swordCopper),
                 "i",
                 "i",
                 "s",
@@ -343,46 +383,46 @@ class CraftingRegistry {
         }
 
         private fun recipeElectricalCable() {
-            addRecipe(Eln.signalCableDescriptor.newItemStack(2),  //signal wire
+            addRecipe(EAU.signalCableDescriptor.newItemStack(2),  //signal wire
                 "R",  //rubber
                 "C",  //iron cable
                 "C",
                 'C', findItemStack("Iron Cable"),
                 'R', "itemRubber")
-            addRecipe(Eln.lowVoltageCableDescriptor.newItemStack(2),  //Low Voltage Cable
+            addRecipe(EAU.lowVoltageCableDescriptor.newItemStack(2),  //Low Voltage Cable
                 "R",
                 "C",
                 "C",
                 'C', findItemStack("Copper Cable"),
                 'R', "itemRubber")
-            addRecipe(Eln.meduimVoltageCableDescriptor.newItemStack(1),  //Meduim Voltage Cable (Medium Voltage Cable)
+            addRecipe(EAU.meduimVoltageCableDescriptor.newItemStack(1),  //Meduim Voltage Cable (Medium Voltage Cable)
                 "R",
                 "C",
-                'C', Eln.lowVoltageCableDescriptor.newItemStack(1),
+                'C', EAU.lowVoltageCableDescriptor.newItemStack(1),
                 'R', "itemRubber")
-            addRecipe(Eln.highVoltageCableDescriptor.newItemStack(1),  //High Voltage Cable
+            addRecipe(EAU.highVoltageCableDescriptor.newItemStack(1),  //High Voltage Cable
                 "R",
                 "C",
-                'C', Eln.meduimVoltageCableDescriptor.newItemStack(1),
+                'C', EAU.meduimVoltageCableDescriptor.newItemStack(1),
                 'R', "itemRubber")
-            addRecipe(Eln.signalCableDescriptor.newItemStack(12),  //Signal Wire
+            addRecipe(EAU.signalCableDescriptor.newItemStack(12),  //Signal Wire
                 "RRR",
                 "CCC",
                 "RRR",
                 'C', ItemStack(Items.iron_ingot),
                 'R', "itemRubber")
-            addRecipe(Eln.signalBusCableDescriptor.newItemStack(1),
+            addRecipe(EAU.signalBusCableDescriptor.newItemStack(1),
                 "R",
                 "C",
-                'C', Eln.signalCableDescriptor.newItemStack(1),
+                'C', EAU.signalCableDescriptor.newItemStack(1),
                 'R', "itemRubber")
-            addRecipe(Eln.lowVoltageCableDescriptor.newItemStack(12),
+            addRecipe(EAU.lowVoltageCableDescriptor.newItemStack(12),
                 "RRR",
                 "CCC",
                 "RRR",
                 'C', "ingotCopper",
                 'R', "itemRubber")
-            addRecipe(Eln.veryHighVoltageCableDescriptor.newItemStack(12),
+            addRecipe(EAU.veryHighVoltageCableDescriptor.newItemStack(12),
                 "RRR",
                 "CCC",
                 "RRR",
@@ -578,11 +618,6 @@ class CraftingRegistry {
         }
 
         private fun recipeSwitch() {
-            /*
-         * addRecipe(findItemStack("Signal Switch"), "  I", " I ", "CAC", 'R', new ItemStack(Items.redstone), 'A', "itemRubber", 'I', findItemStack("Copper Cable"), 'C', findItemStack("Signal Cable"));
-         *
-         * addRecipe(findItemStack("Signal Switch with LED"), " RI", " I ", "CAC", 'R', new ItemStack(Items.redstone), 'A', "itemRubber", 'I', findItemStack("Copper Cable"), 'C', findItemStack("Signal Cable"));
-         */
             addRecipe(findItemStack("Low Voltage Switch"),
                 "  I",
                 " I ",
@@ -607,14 +642,6 @@ class CraftingRegistry {
                 'A', "itemRubber",
                 'I', findItemStack("Copper Cable"),
                 'C', findItemStack("High Voltage Cable"))
-            addRecipe(findItemStack("Very High Voltage Switch"),
-                "AAI",
-                "AIA",
-                "CAC",
-                'R', ItemStack(Items.redstone),
-                'A', "itemRubber",
-                'I', findItemStack("Copper Cable"),
-                'C', findItemStack("Very High Voltage Cable"))
         }
 
         private fun recipeWirelessSignal() {
@@ -624,7 +651,7 @@ class CraftingRegistry {
                 "ICI",
                 'R', ItemStack(Items.redstone),
                 'I', findItemStack("Iron Cable"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'S', findItemStack("Signal Antenna"))
             addRecipe(findItemStack("Wireless Signal Repeater"),
                 "S S",
@@ -632,14 +659,14 @@ class CraftingRegistry {
                 "ICI",
                 'R', ItemStack(Items.redstone),
                 'I', findItemStack("Iron Cable"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'S', findItemStack("Signal Antenna"))
             addRecipe(findItemStack("Wireless Signal Receiver"),
                 " S ",
                 "ICI",
                 'R', ItemStack(Items.redstone),
                 'I', findItemStack("Iron Cable"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'S', findItemStack("Signal Antenna"))
         }
 
@@ -674,25 +701,6 @@ class CraftingRegistry {
                 'A', "itemRubber",
                 'I', findItemStack("Copper Cable"),
                 'C', findItemStack("High Voltage Cable"))
-            addRecipe(findItemStack("Very High Voltage Relay"),
-                "GGG",
-                "OIO",
-                "CRC",
-                'R', ItemStack(Items.redstone),
-                'O', findItemStack("Iron Cable"),
-                'G', ItemStack(Blocks.glass_pane),
-                'A', "itemRubber",
-                'I', findItemStack("Copper Cable"),
-                'C', findItemStack("Very High Voltage Cable"))
-            addRecipe(findItemStack("Signal Relay"),
-                "GGG",
-                "OIO",
-                "CRC",
-                'R', ItemStack(Items.redstone),
-                'O', findItemStack("Iron Cable"),
-                'G', ItemStack(Blocks.glass_pane),
-                'I', findItemStack("Copper Cable"),
-                'C', findItemStack("Signal Cable"))
         }
 
         private fun recipeElectricalDataLogger() {
@@ -701,21 +709,21 @@ class CraftingRegistry {
                 "RGR",
                 "RCR",
                 'R', "itemRubber",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'G', ItemStack(Blocks.glass_pane))
             addRecipe(findItemStack("Modern Data Logger", 1),
                 "RRR",
                 "RGR",
                 "RCR",
                 'R', "itemRubber",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'G', ItemStack(Blocks.glass_pane))
             addRecipe(findItemStack("Industrial Data Logger", 1),
                 "RRR",
                 "GGG",
                 "RCR",
                 'R', "itemRubber",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'G', ItemStack(Blocks.glass_pane))
         }
 
@@ -753,7 +761,7 @@ class CraftingRegistry {
                 " r ",
                 'M', findItemStack("Machine Block"),
                 'c', findItemStack("Signal Cable"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'a', findItemStack("Signal Antenna"),
                 'r', "itemRubber",
                 'I', findItemStack("Iron Cable"),
@@ -764,7 +772,7 @@ class CraftingRegistry {
                 " R ",
                 'M', findItemStack("Machine Block"),
                 'c', findItemStack("Signal Cable"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'a', findItemStack("Signal Antenna"),
                 'r', "itemRubber",
                 'I', findItemStack("Iron Cable"),
@@ -788,22 +796,12 @@ class CraftingRegistry {
                 " ",
                 "i",
                 'i', findItemStack("Iron Cable"))
+            /*
             addRecipe(findItemStack("Lead Fuse for low voltage cables", 4),
                 "rcr",
                 'r', findItemStack("itemRubber"),
                 'c', findItemStack("Low Voltage Cable"))
-            addRecipe(findItemStack("Lead Fuse for medium voltage cables", 4),
-                "rcr",
-                'r', findItemStack("itemRubber"),
-                'c', findItemStack("Medium Voltage Cable"))
-            addRecipe(findItemStack("Lead Fuse for high voltage cables", 4),
-                "rcr",
-                'r', findItemStack("itemRubber"),
-                'c', findItemStack("High Voltage Cable"))
-            addRecipe(findItemStack("Lead Fuse for very high voltage cables", 4),
-                "rcr",
-                'r', findItemStack("itemRubber"),
-                'c', findItemStack("Very High Voltage Cable"))
+             */
         }
 
         private fun recipeElectricalVuMeter() {
@@ -860,45 +858,45 @@ class CraftingRegistry {
                 "p p",
                 "r r",
                 'c', findItemStack("Signal Cable"),
-                'b', Eln.dictCheapChip,
+                'b', EAU.dictCheapChip,
                 'r', "itemRubber",
                 'p', "plateCopper")
             addRecipe(findItemStack("Electrical Fire Buzzer"),
                 "rar",
                 "p p",
                 "r r",
-                'a', Eln.dictAdvancedChip,
+                'a', EAU.dictAdvancedChip,
                 'r', "itemRubber",
                 'p', "plateCopper")
             addShapelessRecipe(findItemStack("Scanner"),
                 ItemStack(Items.comparator),
-                Eln.dictAdvancedChip)
+                EAU.dictAdvancedChip)
         }
 
         private fun recipeElectricalRedstone() {
             addRecipe(findItemStack("Redstone-to-Voltage Converter", 1),
                 "TCS",
                 'S', findItemStack("Signal Cable"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'T', ItemStack(Blocks.redstone_torch))
             addRecipe(findItemStack("Voltage-to-Redstone Converter", 1),
                 "CTR",
                 'R', ItemStack(Items.redstone),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'T', ItemStack(Blocks.redstone_torch))
         }
 
         private fun recipeElectricalGate() {
             addShapelessRecipe(findItemStack("Electrical Timer"),
                 ItemStack(Items.repeater),
-                Eln.dictCheapChip)
+                EAU.dictCheapChip)
             addRecipe(findItemStack("Signal Processor", 1),
                 "IcI",
                 "cCc",
                 "IcI",
                 'I', ItemStack(Items.iron_ingot),
                 'c', findItemStack("Signal Cable"),
-                'C', Eln.dictCheapChip)
+                'C', EAU.dictCheapChip)
         }
 
         private fun recipeElectricalAlarm() {
@@ -966,25 +964,25 @@ class CraftingRegistry {
                 "IRI",
                 "IcI",
                 'c', findItemStack("Copper Cable"),
-                'R', Eln.dictCheapChip,
+                'R', EAU.dictCheapChip,
                 'I', findItemStack("Iron Cable"))
             addRecipe(findItemStack("Advanced Energy Meter"),
                 " c ",
                 "PRP",
                 " c ",
                 'c', findItemStack("Copper Cable"),
-                'R', Eln.dictAdvancedChip,
+                'R', EAU.dictAdvancedChip,
                 'P', findItemStack("Iron Plate"))
         }
 
         private fun recipeTurret() {
-            addRecipe(findItemStack("800V Defence Turret", 1),
+            addRecipe(findItemStack("Defence Turret", 1),
                 " R ",
                 "CMC",
                 " c ",
                 'M', findItemStack("Advanced Machine Block"),
-                'C', Eln.dictAdvancedChip,
-                'c', Eln.highVoltageCableDescriptor.newItemStack(),
+                'C', EAU.dictAdvancedChip,
+                'c', EAU.highVoltageCableDescriptor.newItemStack(),
                 'R', ItemStack(Blocks.redstone_block))
         }
 
@@ -1003,7 +1001,7 @@ class CraftingRegistry {
                 "DMD",
                 "IcI",
                 'M', findItemStack("Advanced Machine Block"),
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'c', findItemStack("Advanced Electrical Motor"),
                 'D', ItemStack(Items.diamond),
                 'I', "ingotAlloy")
@@ -1021,7 +1019,7 @@ class CraftingRegistry {
                 "DMD",
                 "IcI",
                 'M', findItemStack("Advanced Machine Block"),
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'c', findItemStack("Advanced Electrical Motor"),
                 'D', "plateAlloy",
                 'I', "ingotAlloy")
@@ -1038,7 +1036,7 @@ class CraftingRegistry {
                 "DMD",
                 "DcD",
                 'M', findItemStack("Advanced Machine Block"),
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'c', findItemStack("Advanced Electrical Motor"),
                 'D', "plateAlloy",
                 'I', "ingotAlloy")
@@ -1055,17 +1053,8 @@ class CraftingRegistry {
                 "cMc",
                 "III",
                 'M', findItemStack("Advanced Machine Block"),
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'c', findItemStack("Advanced Electrical Motor"),
-                'I', "ingotAlloy")
-            addRecipe(findItemStack("Old 800V Arc Furnace", 1),
-                "ICI",
-                "DMD",
-                "IcI",
-                'M', findItemStack("Advanced Machine Block"),
-                'C', findItemStack("3x Graphite Rods"),
-                'c', findItemStack("Synthetic Diamond"),
-                'D', "plateGold",
                 'I', "ingotAlloy")
         }
 
@@ -1074,73 +1063,73 @@ class CraftingRegistry {
                 "   ",
                 "cCr",
                 "   ",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("AND Chip"),
                 " c ",
                 "cCc",
                 " c ",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("NAND Chip"),
                 " c ",
                 "cCr",
                 " c ",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("OR Chip"),
                 " r ",
                 "rCr",
                 " r ",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'r', ItemStack(Items.redstone))
             addRecipe(findItemStack("NOR Chip"),
                 " r ",
                 "rCc",
                 " r ",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("XOR Chip"),
                 " rr",
                 "rCr",
                 " rr",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'r', ItemStack(Items.redstone))
             addRecipe(findItemStack("XNOR Chip"),
                 " rr",
                 "rCc",
                 " rr",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("PAL Chip"),
                 "rcr",
                 "cCc",
                 "rcr",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("Schmitt Trigger Chip"),
                 "   ",
                 "cCc",
                 "   ",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("D Flip Flop Chip"),
                 "   ",
                 "cCc",
                 " p ",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'p', findItemStack("Copper Plate"),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("Oscillator Chip"),
                 "pdp",
                 "cCc",
                 "   ",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'p', findItemStack("Copper Plate"),
                 'c', findItemStack("Copper Cable"),
                 'd', findItemStack("Dielectric"))
@@ -1148,7 +1137,7 @@ class CraftingRegistry {
                 " p ",
                 "cCc",
                 " p ",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'p', findItemStack("Copper Plate"),
                 'c', findItemStack("Copper Cable"))
             addRecipe(findItemStack("Amplifier"),
@@ -1157,49 +1146,49 @@ class CraftingRegistry {
                 "   ",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("OpAmp"),
                 "  r",
                 "cCc",
                 " c ",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("Configurable summing unit"),
                 " cr",
                 "cCc",
                 " c ",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("Sample and hold"),
                 " rr",
                 "cCc",
                 " c ",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("Voltage controlled sine oscillator"),
                 "rrr",
                 "cCc",
                 "   ",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("Voltage controlled sawtooth oscillator"),
                 "   ",
                 "cCc",
                 "rrr",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("PID Regulator"),
                 "rrr",
                 "cCc",
                 "rcr",
                 'r', ItemStack(Items.redstone),
                 'c', findItemStack("Copper Cable"),
-                'C', Eln.dictAdvancedChip)
+                'C', EAU.dictAdvancedChip)
             addRecipe(findItemStack("Lowpass filter"),
                 "CdC",
                 "cDc",
@@ -1208,7 +1197,7 @@ class CraftingRegistry {
                 'c', findItemStack("Copper Cable"),
                 'C', findItemStack("Copper Plate"),
                 'D', findItemStack("Coal Dust"),
-                's', Eln.dictCheapChip)
+                's', EAU.dictCheapChip)
         }
 
         private fun recipeTransformer() {
@@ -1222,7 +1211,7 @@ class CraftingRegistry {
                 "III",
                 'C', findItemStack("Copper Cable"),
                 'I', ItemStack(Items.iron_ingot),
-                'B', Eln.dictCheapChip)
+                'B', EAU.dictCheapChip)
         }
 
         private fun recipeHeatFurnace() {
@@ -1360,45 +1349,6 @@ class CraftingRegistry {
                 'C', findItemStack("Low Voltage Cable"),
                 'P', "ingotLead",
                 'I', ItemStack(Items.iron_ingot))
-            addRecipe(findItemStack("Capacity Oriented Battery"),
-                "PBP",
-                'B', findItemStack("Cost Oriented Battery"),
-                'P', "ingotLead")
-            addRecipe(findItemStack("Voltage Oriented Battery"),
-                "PBP",
-                'B', findItemStack("Cost Oriented Battery"),
-                'P', findItemStack("Iron Cable"))
-            addRecipe(findItemStack("Current Oriented Battery"),
-                "PBP",
-                'B', findItemStack("Cost Oriented Battery"),
-                'P', "ingotCopper")
-            addRecipe(findItemStack("Life Oriented Battery"),
-                "PBP",
-                'B', findItemStack("Cost Oriented Battery"),
-                'P', ItemStack(Items.gold_ingot))
-            addRecipe(findItemStack("Experimental Battery"),
-                " S ",
-                "LDV",
-                " C ",
-                'S', findItemStack("Capacity Oriented Battery"),
-                'L', findItemStack("Life Oriented Battery"),
-                'V', findItemStack("Voltage Oriented Battery"),
-                'C', findItemStack("Current Oriented Battery"),
-                'D', ItemStack(Items.diamond))
-            addRecipe(findItemStack("Single-use Battery"),
-                "ppp",
-                "III",
-                "ppp",
-                'C', findItemStack("Low Voltage Cable"),
-                'p', ItemStack(Items.coal, 1, 0),
-                'I', "ingotCopper")
-            addRecipe(findItemStack("Single-use Battery"),
-                "ppp",
-                "III",
-                "ppp",
-                'C', findItemStack("Low Voltage Cable"),
-                'p', ItemStack(Items.coal, 1, 1),
-                'I', "ingotCopper")
         }
 
         private fun recipeElectricalFurnace() {
@@ -1419,7 +1369,7 @@ class CraftingRegistry {
                 "MCM",
                 "BOB",
                 " P ",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'O', findItemStack("Ore Scanner"),
                 'B', findItemStack("Advanced Machine Block"),
                 'M', findItemStack("Advanced Electrical Motor"),
@@ -1489,7 +1439,7 @@ class CraftingRegistry {
                 "R i",
                 "CI ",
                 "R i",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'i', ItemStack(Items.iron_ingot),
                 'I', "plateIron",
                 'R', ItemStack(Items.redstone))
@@ -1497,7 +1447,7 @@ class CraftingRegistry {
                 "i  ",
                 " IC",
                 "i  ",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'I', "plateIron",
                 'i', ItemStack(Items.iron_ingot),
                 'R', ItemStack(Items.redstone))
@@ -1505,30 +1455,30 @@ class CraftingRegistry {
                 "c I",
                 "CI ",
                 "c I",
-                'C', Eln.dictAdvancedChip,
-                'c', Eln.dictCheapChip,
+                'C', EAU.dictAdvancedChip,
+                'c', EAU.dictCheapChip,
                 'I', "plateIron",
                 'R', ItemStack(Items.redstone))
             addRecipe(findItemStack("Medium Power Receiver Antenna", 1),
                 "I  ",
                 " IC",
                 "I  ",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'I', "plateIron",
                 'R', ItemStack(Items.redstone))
             addRecipe(findItemStack("High Power Transmitter Antenna", 1),
                 "C I",
                 "CI ",
                 "C I",
-                'C', Eln.dictAdvancedChip,
-                'c', Eln.dictCheapChip,
+                'C', EAU.dictAdvancedChip,
+                'c', EAU.dictCheapChip,
                 'I', "plateIron",
                 'R', ItemStack(Items.redstone))
             addRecipe(findItemStack("High Power Receiver Antenna", 1),
                 "I D",
                 " IC",
                 "I D",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'I', "plateIron",
                 'R', ItemStack(Items.redstone),
                 'D', ItemStack(Items.diamond))
@@ -1539,7 +1489,7 @@ class CraftingRegistry {
                 "IGG",
                 "E G",
                 "CII",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'E', findItemStack("Small 50V Tungsten Heating Corp"),
                 'I', ItemStack(Items.iron_ingot),
                 'G', ItemStack(Blocks.glass_pane))
@@ -1557,7 +1507,7 @@ class CraftingRegistry {
                 "RIR",
                 "ICI",
                 "RcR",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'c', findItemStack("Low Voltage Cable"),
                 'I', findItemStack("Iron Cable"),
                 'R', ItemStack(Items.redstone))
@@ -1565,7 +1515,7 @@ class CraftingRegistry {
                 "RIR",
                 "ICI",
                 "RcR",
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'c', findItemStack("Medium Voltage Cable"),
                 'I', findItemStack("Iron Cable"),
                 'R', ItemStack(Items.redstone))
@@ -1578,7 +1528,7 @@ class CraftingRegistry {
                 " R ",
                 'M', findItemStack("Advanced Machine Block"),
                 'C', findItemStack("High Voltage Cable"),
-                'R', Eln.dictAdvancedChip)
+                'R', EAU.dictAdvancedChip)
         }
 
         private fun recipeWindTurbine() {
@@ -1588,19 +1538,6 @@ class CraftingRegistry {
                 " B ",
                 'B', findItemStack("Machine Block"),
                 'I', "plateIron",
-                'M', findItemStack("Electrical Motor"))
-
-            /*addRecipe(findItemStack("Large Wind Turbine"), //todo add recipe to large wind turbine
-            "TTT",
-            "TCT",
-            "TTT",
-            'T', findItemStack("Wind Turbine"),
-            'C', findItemStack("Advanced Machine Block")); */addRecipe(findItemStack("Water Turbine"),
-                "  I",
-                "BMI",
-                "  I",
-                'I', "plateIron",
-                'B', findItemStack("Machine Block"),
                 'M', findItemStack("Electrical Motor"))
         }
 
@@ -1626,8 +1563,8 @@ class CraftingRegistry {
         }
 
         private fun recipeGeneral() {
-            Utils.addSmelting(Eln.treeResin.parentItem,
-                Eln.treeResin.parentItemDamage, findItemStack("Rubber", 1), 0f)
+            Utils.addSmelting(EAU.treeResin.parentItem,
+                EAU.treeResin.parentItemDamage, findItemStack("Rubber", 1), 0f)
         }
 
         private fun recipeHeatingCorp() {
@@ -1704,7 +1641,7 @@ class CraftingRegistry {
                 " I ",
                 'R', ItemStack(Items.redstone),
                 'I', findItemStack("Iron Cable"),
-                'C', Eln.dictCheapChip)
+                'C', EAU.dictCheapChip)
         }
 
         private fun recipeLampItem() {
@@ -1715,21 +1652,21 @@ class CraftingRegistry {
                 "GFG",
                 " S ",
                 'G', ItemStack(Blocks.glass_pane),
-                'F', Eln.dictTungstenIngot,
+                'F', EAU.dictTungstenIngot,
                 'S', findItemStack("Copper Cable"))
             addRecipe(findItemStack("50V Incandescent Light Bulb", 4),
                 " G ",
                 "GFG",
                 " S ",
                 'G', ItemStack(Blocks.glass_pane),
-                'F', Eln.dictTungstenIngot,
+                'F', EAU.dictTungstenIngot,
                 'S', findItemStack("Low Voltage Cable"))
             addRecipe(findItemStack("200V Incandescent Light Bulb", 4),
                 " G ",
                 "GFG",
                 " S ",
                 'G', ItemStack(Blocks.glass_pane),
-                'F', Eln.dictTungstenIngot,
+                'F', EAU.dictTungstenIngot,
                 'S', findItemStack("Medium Voltage Cable"))
 
             // CARBON
@@ -1789,14 +1726,14 @@ class CraftingRegistry {
                 "FFF",
                 "GSG",
                 'G', ItemStack(Blocks.glass_pane),
-                'F', Eln.dictTungstenIngot,
+                'F', EAU.dictTungstenIngot,
                 'S', findItemStack("Low Voltage Cable"))
             addRecipe(findItemStack("200V Farming Lamp", 2),
                 "GGG",
                 "FFF",
                 "GSG",
                 'G', ItemStack(Blocks.glass_pane),
-                'F', Eln.dictTungstenIngot,
+                'F', EAU.dictTungstenIngot,
                 'S', findItemStack("Medium Voltage Cable"))
             addRecipe(findItemStack("50V LED Bulb", 2),
                 "GGG",
@@ -1812,27 +1749,6 @@ class CraftingRegistry {
                 'G', ItemStack(Blocks.glass_pane),
                 'S', findItemStack("Silicon Ingot"),
                 'C', findItemStack("Medium Voltage Cable"))
-        }
-
-        private fun recipeProtection() {
-            addRecipe(findItemStack("Overvoltage Protection", 4),
-                "SCD",
-                'S', findItemStack("Electrical Probe Chip"),
-                'C', Eln.dictCheapChip,
-                'D', ItemStack(Items.redstone))
-            addRecipe(findItemStack("Overheating Protection", 4),
-                "SCD",
-                'S', findItemStack("Thermal Probe Chip"),
-                'C', Eln.dictCheapChip,
-                'D', ItemStack(Items.redstone))
-        }
-
-        private fun recipeCombustionChamber() {
-            addRecipe(findItemStack("Combustion Chamber"),
-                " L ",
-                "L L",
-                " L ",
-                'L', ItemStack(Blocks.stone))
         }
 
         private fun recipeFerromagneticCore() {
@@ -1857,20 +1773,10 @@ class CraftingRegistry {
             addShapelessRecipe(findItemStack("Alloy Dust", 6),
                 "dustIron",
                 "dustCoal",
-                Eln.dictTungstenDust,
-                Eln.dictTungstenDust,
-                Eln.dictTungstenDust,
-                Eln.dictTungstenDust)
-            addShapelessRecipe(findItemStack("Inert Canister", 1),
-                findItemStack("Lapis Dust"),
-                findItemStack("Lapis Dust"),
-                findItemStack("Lapis Dust"),
-                findItemStack("Lapis Dust"),
-                findItemStack("Diamond Dust"),
-                findItemStack("Lapis Dust"),
-                findItemStack("Lapis Dust"),
-                findItemStack("Lapis Dust"),
-                findItemStack("Lapis Dust"))
+                EAU.dictTungstenDust,
+                EAU.dictTungstenDust,
+                EAU.dictTungstenDust,
+                EAU.dictTungstenDust)
         }
 
         private fun recipeElectricalMotor() {
@@ -1935,7 +1841,7 @@ class CraftingRegistry {
                 "RC",
                 'w', findItemStack("Wrench"),
                 'R', ItemStack(Items.redstone),
-                'C', Eln.dictAdvancedChip
+                'C', EAU.dictAdvancedChip
             )
         }
 
@@ -1945,7 +1851,7 @@ class CraftingRegistry {
                 " T ",
                 " P ",
                 'T', findItemStack("Mining Pipe"),
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'M', findItemStack("Electrical Motor"),
                 'P', ItemStack(Items.iron_pickaxe))
             addRecipe(findItemStack("Average Electrical Drill"),
@@ -1953,7 +1859,7 @@ class CraftingRegistry {
                 " D ",
                 " d ",
                 'R', Items.redstone,
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'D', findItemStack("Cheap Electrical Drill"),
                 'd', ItemStack(Items.diamond))
             addRecipe(findItemStack("Fast Electrical Drill"),
@@ -1961,7 +1867,7 @@ class CraftingRegistry {
                 " T ",
                 " P ",
                 'T', findItemStack("Mining Pipe"),
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'M', findItemStack("Advanced Electrical Motor"),
                 'P', ItemStack(Items.diamond_pickaxe))
             addRecipe(findItemStack("Turbo Electrical Drill"),
@@ -1969,7 +1875,7 @@ class CraftingRegistry {
                 " F ",
                 " D ",
                 'F', findItemStack("Fast Electrical Drill"),
-                'C', Eln.dictAdvancedChip,
+                'C', EAU.dictAdvancedChip,
                 'R', findItemStack("Graphite Rod"),
                 'D', findItemStack("Synthetic Diamond"))
             addRecipe(findItemStack("Irresponsible Electrical Drill"),
@@ -1985,7 +1891,7 @@ class CraftingRegistry {
                 "IGI",
                 "RCR",
                 "IGI",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'R', ItemStack(Items.redstone),
                 'I', findItemStack("Iron Cable"),
                 'G', ItemStack(Items.gold_ingot))
@@ -2016,38 +1922,10 @@ class CraftingRegistry {
                 'I', ItemStack(Items.iron_ingot))
             addRecipe(findItemStack("Tungsten Cable", 6),
                 "III",
-                'I', Eln.dictTungstenIngot)
-            /*addRecipe(findItemStack("T1 Transmission Cable", 6),
-            "III",
-            'I', firstExistingOre("ingotSteel", "Arc Metal Ingot"));
-        addRecipe(findItemStack("T2 Transmission Cable", 6),
-            "III",
-            'I', firstExistingOre("ingotAluminium", "ingotAluminum", "Arc Clay Ingot"));
-*/
+                'I', EAU.dictTungstenIngot)
         }
 
         private fun recipeGraphite() {
-            addRecipe(findItemStack("Creative Cable", 1),
-                "I",
-                "S",
-                'S', findItemStack("unreleasedium"),
-                'I', findItemStack("Synthetic Diamond"))
-            addRecipe(ItemStack(Eln.arcClayBlock),
-                "III",
-                "III",
-                "III",
-                'I', findItemStack("Arc Clay Ingot"))
-            addRecipe(findItemStack("Arc Clay Ingot", 9),
-                "I",
-                'I', ItemStack(Eln.arcClayBlock))
-            addRecipe(ItemStack(Eln.arcMetalBlock),
-                "III",
-                "III",
-                "III",
-                'I', findItemStack("Arc Metal Ingot"))
-            addRecipe(findItemStack("Arc Metal Ingot", 9),
-                "I",
-                'I', ItemStack(Eln.arcMetalBlock))
             addRecipe(findItemStack("Graphite Rod", 2),
                 "I",
                 'I', findItemStack("2x Graphite Rods"))
@@ -2105,7 +1983,7 @@ class CraftingRegistry {
                 "LRL",
                 "RCR",
                 "LRL",
-                'C', Eln.dictCheapChip,
+                'C', EAU.dictCheapChip,
                 'L', "ingotSilicon",
                 'R', ItemStack(Items.redstone))
             addRecipe(findItemStack("Machine Block"),
@@ -2146,7 +2024,7 @@ class CraftingRegistry {
                 "c",
                 "m",
                 'm', findItemStack("Electrical Motor"),
-                'c', Eln.dictAdvancedChip)
+                'c', EAU.dictAdvancedChip)
             addRecipe(findItemStack("Wrench"),
                 " c ",
                 "cc ",
@@ -2174,35 +2052,35 @@ class CraftingRegistry {
                 "tIt",
                 " t ",
                 'I', "plateIron",
-                't', Eln.dictTungstenDust
+                't', EAU.dictTungstenDust
             )
             addRecipe(findItemStack("Gold Clutch Plate"),
                 " t ",
                 "tGt",
                 " t ",
                 'G', "plateGold",
-                't', Eln.dictTungstenDust
+                't', EAU.dictTungstenDust
             )
             addRecipe(findItemStack("Copper Clutch Plate"),
                 " t ",
                 "tCt",
                 " t ",
                 'C', "plateCopper",
-                't', Eln.dictTungstenDust
+                't', EAU.dictTungstenDust
             )
             addRecipe(findItemStack("Lead Clutch Plate"),
                 " t ",
                 "tLt",
                 " t ",
                 'L', "plateLead",
-                't', Eln.dictTungstenDust
+                't', EAU.dictTungstenDust
             )
             addRecipe(findItemStack("Coal Clutch Plate"),
                 " t ",
                 "tCt",
                 " t ",
                 'C', "plateCoal",
-                't', Eln.dictTungstenDust
+                't', EAU.dictTungstenDust
             )
             addRecipe(findItemStack("Clutch Pin", 4),
                 "s",
@@ -2250,12 +2128,12 @@ class CraftingRegistry {
                 'B', findItemStack("Portable Battery"),
                 'M', findItemStack("Electrical Motor"),
                 'I', ItemStack(Items.iron_ingot))
-            if (Eln.xRayScannerCanBeCrafted) {
+            if (EAU.xRayScannerCanBeCrafted) {
                 addRecipe(findItemStack("X-Ray Scanner"),
                     "PGP",
                     "PCP",
                     "PBP",
-                    'C', Eln.dictAdvancedChip,
+                    'C', EAU.dictAdvancedChip,
                     'B', findItemStack("Portable Battery"),
                     'P', findItemStack("Iron Cable"),
                     'G', findItemStack("Ore Scanner"))
@@ -2263,13 +2141,7 @@ class CraftingRegistry {
         }
 
         private fun recipePortableCapacitor() {
-            addRecipe(findItemStack("Portable Condensator"),  /*"RcR",
-            "wCw",
-            "RcR",
-            'C', new ItemStack(Items.redstone),
-            'R', "itemRubber",
-            'w', findItemStack("Copper Cable"),
-            'c', "plateCopper");*/
+            addRecipe(findItemStack("Portable Condensator"),
                 " r ",
                 "cDc",
                 " r ",
@@ -2284,145 +2156,109 @@ class CraftingRegistry {
         }
 
         private fun recipeFurnace() {
-            var `in`: ItemStack
+            var `in`: ItemStack?
             `in` = findItemStack("Copper Ore")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Copper Ingot"))
+            Utils.addSmelting(`in`, findItemStack("Copper Ingot"))
             `in` = findItemStack("dustCopper")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Copper Ingot"))
+            Utils.addSmelting(`in`, findItemStack("Copper Ingot"))
             `in` = findItemStack("Lead Ore")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("ingotLead"))
+            Utils.addSmelting(`in`, findItemStack("ingotLead"))
             `in` = findItemStack("dustLead")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("ingotLead"))
+            Utils.addSmelting(`in`, findItemStack("ingotLead"))
             `in` = findItemStack("Tungsten Ore")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Tungsten Ingot"))
+            Utils.addSmelting(`in`, findItemStack("Tungsten Ingot"))
             `in` = findItemStack("Tungsten Dust")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Tungsten Ingot"))
+            Utils.addSmelting(`in`, findItemStack("Tungsten Ingot"))
             `in` = findItemStack("dustIron")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                ItemStack(Items.iron_ingot))
+            Utils.addSmelting(`in`, ItemStack(Items.iron_ingot))
             `in` = findItemStack("dustGold")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                ItemStack(Items.gold_ingot))
+            Utils.addSmelting(`in`, ItemStack(Items.gold_ingot))
             `in` = findItemStack("Tree Resin")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Rubber", 2))
+            Utils.addSmelting(`in`, findItemStack("Rubber", 2))
             `in` = findItemStack("Alloy Dust")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Alloy Ingot"))
+            Utils.addSmelting(`in`, findItemStack("Alloy Ingot"))
             `in` = findItemStack("Silicon Dust")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Silicon Ingot"))
+            Utils.addSmelting(`in`, findItemStack("Silicon Ingot"))
             `in` = findItemStack("dustCinnabar")
-            Utils.addSmelting(`in`.item, `in`.itemDamage,
-                findItemStack("Mercury"))
-        }
-
-        private fun recipeArcFurnace() {
-            val f = 200000f
-            val smeltf = 5000.0
-            //start smelting recipes
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.iron_ore, 1), arrayOf(ItemStack(Items.iron_ingot, 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.gold_ore, 1), arrayOf(ItemStack(Items.gold_ingot, 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.coal_ore, 1), arrayOf(ItemStack(Items.coal, 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.redstone_ore, 1), arrayOf(ItemStack(Items.redstone, 6)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.lapis_ore, 1), arrayOf(ItemStack(Blocks.lapis_block, 1)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.diamond_ore, 1), arrayOf(ItemStack(Items.diamond, 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.emerald_ore, 1), arrayOf(ItemStack(Items.emerald, 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Blocks.quartz_ore, 1), arrayOf(ItemStack(Items.quartz, 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(findItemStack("Copper Ore", 1), arrayOf(findItemStack("Copper Ingot", 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(findItemStack("Lead Ore", 1), arrayOf(findItemStack("Lead Ingot", 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(findItemStack("Tungsten Ore", 1), arrayOf(findItemStack("Tungsten Ingot", 2)), smeltf))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(findItemStack("Alloy Dust", 1), arrayOf(findItemStack("Alloy Ingot", 1)), smeltf))
-            //end smelting recipes
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Items.clay_ball, 2), arrayOf(findItemStack("Arc Clay Ingot", 1)), 2.0 * f))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot, 1), arrayOf(findItemStack("Arc Metal Ingot", 1)), 1.0 * f))
-            Eln.arcFurnaceRecipes.addRecipe(Recipe(findItemStack("Canister of Water", 1), arrayOf(findItemStack("Canister of Arc Water", 1)), 7000000.0)) //hardcoded 7MJ to prevent overunity
+            Utils.addSmelting(`in`, findItemStack("Mercury"))
         }
 
         private fun recipeMacerator() {
             val f = 4000f
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.coal_ore, 1),
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.coal_ore, 1),
                 ItemStack(Items.coal, 3, 0), 1.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Copper Ore"), arrayOf(findItemStack("Copper Dust", 2)), 1.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.iron_ore), arrayOf(findItemStack("Iron Dust", 2)), 1.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.gold_ore), arrayOf(findItemStack("Gold Dust", 2)), 3.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Lead Ore"), arrayOf(findItemStack("Lead Dust", 2)), 2.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Tungsten Ore"), arrayOf(findItemStack("Tungsten Dust", 2)), 2.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.coal, 1, 0), arrayOf(findItemStack("Coal Dust", 1)), 1.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.coal, 1, 1), arrayOf(findItemStack("Coal Dust", 1)), 1.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.sand, 1), arrayOf(findItemStack("Silicon Dust", 1)), 3.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Cinnabar Ore"), arrayOf(findItemStack("Cinnabar Dust", 1)), 2.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.dye, 1, 4), arrayOf(findItemStack("Lapis Dust", 1)), 2.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.diamond, 1), arrayOf(findItemStack("Diamond Dust", 1)), 2.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Copper Ingot"), arrayOf(findItemStack("Copper Dust", 1)), 0.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot), arrayOf(findItemStack("Iron Dust", 1)), 0.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.gold_ingot), arrayOf(findItemStack("Gold Dust", 1)), 0.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Lead Ingot"), arrayOf(findItemStack("Lead Dust", 1)), 0.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Tungsten Ingot"), arrayOf(findItemStack("Tungsten Dust", 1)), 0.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.cobblestone), arrayOf(ItemStack(Blocks.gravel)), 1.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.gravel), arrayOf(ItemStack(Items.flint)), 1.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.dirt), arrayOf(ItemStack(Blocks.sand)), 1.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Copper Ore"), arrayOf(findItemStack("Copper Dust", 2)), 1.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.iron_ore), arrayOf(findItemStack("Iron Dust", 2)), 1.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.gold_ore), arrayOf(findItemStack("Gold Dust", 2)), 3.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Lead Ore"), arrayOf(findItemStack("Lead Dust", 2)), 2.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Tungsten Ore"), arrayOf(findItemStack("Tungsten Dust", 2)), 2.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.coal, 1, 0), arrayOf(findItemStack("Coal Dust", 1)), 1.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.coal, 1, 1), arrayOf(findItemStack("Coal Dust", 1)), 1.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.sand, 1), arrayOf(findItemStack("Silicon Dust", 1)), 3.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Cinnabar Ore"), arrayOf(findItemStack("Cinnabar Dust", 1)), 2.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.dye, 1, 4), arrayOf(findItemStack("Lapis Dust", 1)), 2.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.diamond, 1), arrayOf(findItemStack("Diamond Dust", 1)), 2.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Copper Ingot"), arrayOf(findItemStack("Copper Dust", 1)), 0.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot), arrayOf(findItemStack("Iron Dust", 1)), 0.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Items.gold_ingot), arrayOf(findItemStack("Gold Dust", 1)), 0.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Lead Ingot"), arrayOf(findItemStack("Lead Dust", 1)), 0.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Tungsten Ingot"), arrayOf(findItemStack("Tungsten Dust", 1)), 0.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.cobblestone), arrayOf(ItemStack(Blocks.gravel)), 1.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.gravel), arrayOf(ItemStack(Items.flint)), 1.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(ItemStack(Blocks.dirt), arrayOf(ItemStack(Blocks.sand)), 1.0 * f))
             //recycling recipes
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Helmet"), arrayOf(findItemStack("Coal Dust", 16)), 10.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Boots"), arrayOf(findItemStack("Coal Dust", 12)), 10.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Chestplate"), arrayOf(findItemStack("Coal Dust", 24)), 10.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Leggings"), arrayOf(findItemStack("Coal Dust", 24)), 10.0 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Cost Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Life Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Current Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Voltage Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Capacity Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
-            Eln.maceratorRecipes.addRecipe(Recipe(findItemStack("Single-use Battery"), arrayOf(findItemStack("Copper Dust", 3)), 10.0 * f))
-
-            //end recycling recipes
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Helmet"), arrayOf(findItemStack("Coal Dust", 16)), 10.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Boots"), arrayOf(findItemStack("Coal Dust", 12)), 10.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Chestplate"), arrayOf(findItemStack("Coal Dust", 24)), 10.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("E-Coal Leggings"), arrayOf(findItemStack("Coal Dust", 24)), 10.0 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Cost Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Life Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Current Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Voltage Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Capacity Oriented Battery"), arrayOf(findItemStack("Lead Dust", 6)), 12.5 * f))
+            EAU.maceratorRecipes.addRecipe(Recipe(findItemStack("Single-use Battery"), arrayOf(findItemStack("Copper Dust", 3)), 10.0 * f))
         }
 
         private fun recipeCompressor() {
-            Eln.compressorRecipes.addRecipe(Recipe(findItemStack("4x Graphite Rods", 1),
+            EAU.compressorRecipes.addRecipe(Recipe(findItemStack("4x Graphite Rods", 1),
                 findItemStack("Synthetic Diamond"), 80000.0))
             // extractorRecipes.addRecipe(new
             // Recipe("dustCinnabar",new
             // ItemStack[]{findItemStack("Purified Cinnabar Dust",1)}, 1000.0));
-            Eln.compressorRecipes.addRecipe(Recipe(findItemStack("Coal Dust", 4),
+            EAU.compressorRecipes.addRecipe(Recipe(findItemStack("Coal Dust", 4),
                 findItemStack("Coal Plate"), 40000.0))
-            Eln.compressorRecipes.addRecipe(Recipe(findItemStack("Coal Plate", 4),
+            EAU.compressorRecipes.addRecipe(Recipe(findItemStack("Coal Plate", 4),
                 findItemStack("Graphite Rod"), 80000.0))
-            Eln.compressorRecipes.addRecipe(Recipe(ItemStack(Blocks.sand),
+            EAU.compressorRecipes.addRecipe(Recipe(ItemStack(Blocks.sand),
                 findItemStack("Dielectric"), 2000.0))
-            Eln.compressorRecipes.addRecipe(Recipe(ItemStack(Blocks.log),
+            EAU.compressorRecipes.addRecipe(Recipe(ItemStack(Blocks.log),
                 findItemStack("Tree Resin"), 3000.0))
         }
 
         private fun recipePlateMachine() {
             val f = 10000f
-            Eln.plateMachineRecipes.addRecipe(Recipe(
-                findItemStack("Copper Ingot", Eln.plateConversionRatio),
+            EAU.plateMachineRecipes.addRecipe(Recipe(
+                findItemStack("Copper Ingot", EAU.plateConversionRatio),
                 findItemStack("Copper Plate"), 1.0 * f))
-            Eln.plateMachineRecipes.addRecipe(Recipe(findItemStack("Lead Ingot", Eln.plateConversionRatio),
+            EAU.plateMachineRecipes.addRecipe(Recipe(findItemStack("Lead Ingot", EAU.plateConversionRatio),
                 findItemStack("Lead Plate"), 1.0 * f))
-            Eln.plateMachineRecipes.addRecipe(Recipe(
+            EAU.plateMachineRecipes.addRecipe(Recipe(
                 findItemStack("Silicon Ingot", 4),
                 findItemStack("Silicon Plate"), 1.0 * f))
-            Eln.plateMachineRecipes.addRecipe(Recipe(findItemStack("Alloy Ingot", Eln.plateConversionRatio),
+            EAU.plateMachineRecipes.addRecipe(Recipe(findItemStack("Alloy Ingot", EAU.plateConversionRatio),
                 findItemStack("Alloy Plate"), 1.0 * f))
-            Eln.plateMachineRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot, Eln.plateConversionRatio,
+            EAU.plateMachineRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot, EAU.plateConversionRatio,
                 0), findItemStack("Iron Plate"), 1.0 * f))
-            Eln.plateMachineRecipes.addRecipe(Recipe(ItemStack(Items.gold_ingot, Eln.plateConversionRatio,
+            EAU.plateMachineRecipes.addRecipe(Recipe(ItemStack(Items.gold_ingot, EAU.plateConversionRatio,
                 0), findItemStack("Gold Plate"), 1.0 * f))
         }
 
         private fun recipeMagnetizer() {
-            Eln.magnetiserRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot, 2), arrayOf(findItemStack("Basic Magnet")), 5000.0))
-            Eln.magnetiserRecipes.addRecipe(Recipe(findItemStack("Alloy Ingot", 2), arrayOf(findItemStack("Advanced Magnet")), 15000.0))
-            Eln.magnetiserRecipes.addRecipe(Recipe(findItemStack("Copper Dust", 1), arrayOf(ItemStack(Items.redstone)), 5000.0))
-            Eln.magnetiserRecipes.addRecipe(Recipe(findItemStack("Basic Magnet", 3), arrayOf(findItemStack("Optimal Ferromagnetic Core")), 5000.0))
-            Eln.magnetiserRecipes.addRecipe(Recipe(findItemStack("Inert Canister", 1), arrayOf(ItemStack(Items.ender_pearl)), 150000.0))
+            EAU.magnetiserRecipes.addRecipe(Recipe(ItemStack(Items.iron_ingot, 2), arrayOf(findItemStack("Basic Magnet")), 5000.0))
+            EAU.magnetiserRecipes.addRecipe(Recipe(findItemStack("Alloy Ingot", 2), arrayOf(findItemStack("Advanced Magnet")), 15000.0))
+            EAU.magnetiserRecipes.addRecipe(Recipe(findItemStack("Copper Dust", 1), arrayOf(ItemStack(Items.redstone)), 5000.0))
+            EAU.magnetiserRecipes.addRecipe(Recipe(findItemStack("Basic Magnet", 3), arrayOf(findItemStack("Optimal Ferromagnetic Core")), 5000.0))
+            EAU.magnetiserRecipes.addRecipe(Recipe(findItemStack("Inert Canister", 1), arrayOf(ItemStack(Items.ender_pearl)), 150000.0))
         }
 
         private fun recipeFuelBurnerItem() {
@@ -2496,7 +2332,7 @@ class CraftingRegistry {
                 "ingotAluminum",
                 "ingotAluminium",
                 "ingotSteel")) {
-                if (Eln.oreNames.contains(oreName)) {
+                if (EAU.oreNames.contains(oreName)) {
                     addRecipe(findItemStack("Utility Pole"),
                         "WWW",
                         "IWI",
@@ -2537,7 +2373,7 @@ class CraftingRegistry {
             )) {
                 val blockType = "block$type"
                 val ingotType = "ingot$type"
-                if (Eln.oreNames.contains(blockType)) {
+                if (EAU.oreNames.contains(blockType)) {
                     addRecipe(findItemStack("Transmission Tower"),
                         "ii ",
                         "mi ",
@@ -2554,26 +2390,8 @@ class CraftingRegistry {
                         Character.valueOf('m'), findItemStack("Advanced Machine Block"))
                 }
             }
+        }
 
-//		if (oreNames.contains("sheetPlastic")) {
-//			addRecipe(findItemStack("Downlink"),
-//					"H H",
-//					"PMP",
-//					"PPP",
-//					'P', "sheetPlastic",
-//					'M', findItemStack("Machine Block"),
-//					'H', findItemStack("High Voltage Cable")
-//			);
-//		} else {
-//			addRecipe(findItemStack("Downlink"),
-//					"H H",
-//					"PMP",
-//					"PPP",
-//					'P', "itemRubber",
-//					'M', findItemStack("Machine Block"),
-//					'H', findItemStack("High Voltage Cable")
-//			);
-//		}
-        }*/
+         */
     }
 }
