@@ -130,27 +130,103 @@ class ItemRegistry {
             var name: String
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Helmet")
-                EAU.helmetCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Helmet, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.helmetCopper = genericArmorItem(ArmorMaterial.CHAIN, 2, ArmourType.Helmet, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.helmetCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.helmetCopper))
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Chestplate")
-                EAU.plateCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Chestplate, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.plateCopper = genericArmorItem(ArmorMaterial.CHAIN, 2, ArmourType.Chestplate, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.plateCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.plateCopper))
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Leggings")
-                EAU.legsCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Leggings, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.legsCopper = genericArmorItem(ArmorMaterial.CHAIN, 2, ArmourType.Leggings, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.legsCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.legsCopper))
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Boots")
-                EAU.bootsCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Boots, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_boots").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.bootsCopper = genericArmorItem(ArmorMaterial.CHAIN, 2, ArmourType.Boots, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_boots").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.bootsCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.bootsCopper))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Helmet")
+                EAU.helmetBronze = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Helmet, "eau:textures/armor/bronze_layer_1.png", "eau:textures/armor/bronze_layer_2.png").setUnlocalizedName(name).setTextureName("eau:bronze_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.helmetBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.helmetBronze))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Chestplate")
+                EAU.plateBronze = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Chestplate, "eau:textures/armor/bronze_layer_1.png", "eau:textures/armor/bronze_layer_2.png").setUnlocalizedName(name).setTextureName("eau:bronze_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.plateBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.plateBronze))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Leggings")
+                EAU.legsBronze = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Leggings, "eau:textures/armor/bronze_layer_1.png", "eau:textures/armor/bronze_layer_2.png").setUnlocalizedName(name).setTextureName("eau:bronze_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.legsBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.legsBronze))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Boots")
+                EAU.bootsBronze = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Boots, "eau:textures/armor/bronze_layer_1.png", "eau:textures/armor/bronze_layer_2.png").setUnlocalizedName(name).setTextureName("eau:bronze_boots").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.bootsBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.bootsBronze))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Electrum Helmet")
+                EAU.helmetElectrum = genericArmorItem(ArmorMaterial.GOLD, 2, ArmourType.Helmet, "eau:textures/armor/electrum_layer_1.png", "eau:textures/armor/electrum_layer_2.png").setUnlocalizedName(name).setTextureName("eau:electrum_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.helmetElectrum, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.helmetElectrum))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Electrum Chestplate")
+                EAU.plateElectrum = genericArmorItem(ArmorMaterial.GOLD, 2, ArmourType.Chestplate, "eau:textures/armor/electrum_layer_1.png", "eau:textures/armor/electrum_layer_2.png").setUnlocalizedName(name).setTextureName("eau:electrum_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.plateElectrum, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.plateElectrum))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Electrum Leggings")
+                EAU.legsElectrum = genericArmorItem(ArmorMaterial.GOLD, 2, ArmourType.Leggings, "eau:textures/armor/electrum_layer_1.png", "eau:textures/armor/electrum_layer_2.png").setUnlocalizedName(name).setTextureName("eau:electrum_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.legsElectrum, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.legsElectrum))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Electrum Boots")
+                EAU.bootsElectrum = genericArmorItem(ArmorMaterial.GOLD, 2, ArmourType.Boots, "eau:textures/armor/electrum_layer_1.png", "eau:textures/armor/electrum_layer_2.png").setUnlocalizedName(name).setTextureName("eau:electrum_boots").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.bootsElectrum, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.bootsElectrum))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Lead Helmet")
+                EAU.helmetLead = genericArmorItem(ArmorMaterial.DIAMOND, 2, ArmourType.Helmet, "eau:textures/armor/lead_layer_1.png", "eau:textures/armor/lead_layer_2.png").setUnlocalizedName(name).setTextureName("eau:lead_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.helmetLead, "Eln.$name")
+                var helmetLeadStack = ItemStack(EAU.helmetLead)
+                var helmetLeadNBT = helmetLeadStack.tagCompound
+                //helmetLeadNBT.setTag("AttributeName",true)
+                //helmetLeadStack.writeToNBT(helmetLeadNBT)
+                GameRegistry.registerCustomItemStack(name, helmetLeadStack)
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Lead Chestplate")
+                EAU.plateLead = genericArmorItem(ArmorMaterial.DIAMOND, 2, ArmourType.Chestplate, "eau:textures/armor/lead_layer_1.png", "eau:textures/armor/lead_layer_2.png").setUnlocalizedName(name).setTextureName("eau:lead_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.plateLead, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.plateLead))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Lead Leggings")
+                EAU.legsLead = genericArmorItem(ArmorMaterial.DIAMOND, 2, ArmourType.Leggings, "eau:textures/armor/lead_layer_1.png", "eau:textures/armor/lead_layer_2.png").setUnlocalizedName(name).setTextureName("eau:lead_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.legsLead, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.legsLead))
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Lead Boots")
+                EAU.bootsLead = genericArmorItem(ArmorMaterial.DIAMOND, 2, ArmourType.Boots, "eau:textures/armor/lead_layer_1.png", "eau:textures/armor/lead_layer_2.png").setUnlocalizedName(name).setTextureName("eau:lead_boots").setCreativeTab(EAU.itemTab) as ItemArmor
+                GameRegistry.registerItem(EAU.bootsLead, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.bootsLead))
             }
             val t1 = "eau:textures/armor/ecoal_layer_1.png"
             val t2 = "eau:textures/armor/ecoal_layer_2.png"
@@ -206,34 +282,34 @@ class ItemRegistry {
         private fun registerTool() {
             var name: String
             run {
-                name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Sword")
-                EAU.swordCopper = ItemSword(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:copper_sword").setCreativeTab(EAU.itemTab)
-                GameRegistry.registerItem(EAU.swordCopper, "Eln.$name")
-                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.swordCopper))
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Sword")
+                EAU.swordBronze = ItemSword(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:bronze_sword").setCreativeTab(EAU.itemTab)
+                GameRegistry.registerItem(EAU.swordBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.swordBronze))
             }
             run {
-                name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Hoe")
-                EAU.hoeCopper = ItemHoe(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:copper_hoe").setCreativeTab(EAU.itemTab)
-                GameRegistry.registerItem(EAU.hoeCopper, "Eln.$name")
-                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.hoeCopper))
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Hoe")
+                EAU.hoeBronze = ItemHoe(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:bronze_hoe").setCreativeTab(EAU.itemTab)
+                GameRegistry.registerItem(EAU.hoeBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.hoeBronze))
             }
             run {
-                name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Shovel")
-                EAU.shovelCopper = ItemSpade(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:copper_shovel").setCreativeTab(EAU.itemTab)
-                GameRegistry.registerItem(EAU.shovelCopper, "Eln.$name")
-                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.shovelCopper))
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Shovel")
+                EAU.shovelBronze = ItemSpade(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:bronze_shovel").setCreativeTab(EAU.itemTab)
+                GameRegistry.registerItem(EAU.shovelBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.shovelBronze))
             }
             run {
-                name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Pickaxe")
-                EAU.pickaxeCopper = ItemPickaxeEln(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:copper_pickaxe").setCreativeTab(EAU.itemTab)
-                GameRegistry.registerItem(EAU.pickaxeCopper, "Eln.$name")
-                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.pickaxeCopper))
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Pickaxe")
+                EAU.pickaxeBronze = ItemPickaxeEln(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:bronze_pickaxe").setCreativeTab(EAU.itemTab)
+                GameRegistry.registerItem(EAU.pickaxeBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.pickaxeBronze))
             }
             run {
-                name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Axe")
-                EAU.axeCopper = ItemAxeEln(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:copper_axe").setCreativeTab(EAU.itemTab)
-                GameRegistry.registerItem(EAU.axeCopper, "Eln.$name")
-                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.axeCopper))
+                name = I18N.TR_NAME(I18N.Type.ITEM, "Bronze Axe")
+                EAU.axeBronze = ItemAxeEln(ToolMaterial.IRON).setUnlocalizedName(name).setTextureName("eau:bronze_axe").setCreativeTab(EAU.itemTab)
+                GameRegistry.registerItem(EAU.axeBronze, "Eln.$name")
+                GameRegistry.registerCustomItemStack(name, ItemStack(EAU.axeBronze))
             }
         }
 
@@ -527,10 +603,29 @@ class ItemRegistry {
                 CraftingRegistry.addToOre(EAU.dictTungstenIngot, element.newItemStack())
             }
             run {
+                name = I18N.TR_NAME(I18N.Type.NONE, "Silver Ingot")
+                val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
+                EAU.silverIngot = element
+                registerItem(id, 3, element)
+                CraftingRegistry.addToOre("ingotSilver", element.newItemStack())
+            }
+            run {
                 name = I18N.TR_NAME(I18N.Type.NONE, "Alloy Ingot")
                 val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
                 registerItem(id, 4, element)
                 CraftingRegistry.addToOre("ingotAlloy", element.newItemStack())
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.NONE, "Bronze Ingot")
+                val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
+                registerItem(id, 5, element)
+                CraftingRegistry.addToOre("ingotBronze", element.newItemStack())
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.NONE, "Electrum Ingot")
+                val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
+                registerItem(id, 6, element)
+                CraftingRegistry.addToOre("ingotElectrum", element.newItemStack())
             }
         }
 
@@ -594,6 +689,27 @@ class ItemRegistry {
                 val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
                 registerItem(id, 8, element)
                 CraftingRegistry.addToOre("dustAlloy", element.newItemStack())
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.NONE, "Bronze Dust")
+                val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
+                EAU.dustBronze = element
+                registerItem(id, 9, element)
+                CraftingRegistry.addToOre("dustBronze", element.newItemStack())
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.NONE, "Silver Dust")
+                val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
+                EAU.dustSilver = element
+                registerItem(id, 10, element)
+                CraftingRegistry.addToOre("dustSilver", element.newItemStack())
+            }
+            run {
+                name = I18N.TR_NAME(I18N.Type.NONE, "Electrum Dust")
+                val element = GenericItemUsingDamageDescriptorWithComment(name, arrayOf())
+                EAU.dustElectrum = element
+                registerItem(id, 11, element)
+                CraftingRegistry.addToOre("dustElectrum", element.newItemStack())
             }
         }
 

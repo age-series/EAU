@@ -191,7 +191,7 @@ public class EAU {
     public static GenericItemUsingDamageDescriptorWithComment tinIngot, copperIngot,
         silverIngot, plumbIngot, tungstenIngot;
     public static GenericItemUsingDamageDescriptorWithComment dustTin,
-        dustCopper, dustSilver;
+        dustCopper, dustSilver, dustBronze, dustElectrum;
     public static final HashMap<String, ItemStack> dictionnaryOreFromMod = new HashMap<>();
 
     public static CableRenderDescriptor uninsulatedLowCurrentRender;
@@ -224,8 +224,11 @@ public class EAU {
     public static  double carbonLampLife;
     public static  double ledLampLife;
     public static boolean ledLampInfiniteLife = false;
-    public static Item swordCopper, hoeCopper, shovelCopper, pickaxeCopper, axeCopper;
+    public static Item swordBronze, hoeBronze, shovelBronze, pickaxeBronze, axeBronze;
     public static ItemArmor helmetCopper, plateCopper, legsCopper, bootsCopper;
+    public static ItemArmor helmetLead, plateLead, legsLead, bootsLead;
+    public static ItemArmor helmetElectrum, plateElectrum, legsElectrum, bootsElectrum;
+    public static ItemArmor helmetBronze, plateBronze, legsBronze, bootsBronze;
     public static ItemArmor helmetECoal, plateECoal, legsECoal, bootsECoal;
     public static SharedItem sharedItem;
     public static SharedItem sharedItemStackOne;
