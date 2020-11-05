@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
 import net.minecraftforge.client.IItemRenderer
-import net.minecraft.block.Block
 import net.minecraft.entity.EntityLiving
 import org.ja13.eau.misc.Coordonate
 import org.ja13.eau.misc.Direction
@@ -16,12 +15,9 @@ import org.ja13.eau.misc.VoltageTier
 import org.ja13.eau.sim.mna.misc.MnaConst
 import org.lwjgl.opengl.GL11
 import java.util.*
-import net.minecraft.init.Blocks
-import net.minecraft.item.Item.getItemFromBlock
-import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.monster.EntityCreeper
 import net.minecraft.entity.player.EntityPlayerMP
-import net.minecraft.world.World
+import net.minecraft.entity.monster.EntityEnderman
 
 
 
@@ -217,7 +213,12 @@ class PlayerHarmer(val electricalLoad: org.ja13.eau.sim.ElectricalLoad, private 
             val distance = location.distanceTo(ent)
             val pain = (harmFunction(distance) * harmLevel).toFloat()
             if(distance < 1 && pain > 0.05 && ent.onGround){ //if they're touching the block, deal extra effects
-                if(ent is EntityCreeper){ location.world().createExplosion(ent,ent.posX,ent.posY+0.3,ent.posZ,1f,true); ent.setDead() }
+                if(ent is EntityCreeper){
+                    location.world().createExplosion(ent, ent.posX, ent.posY, ent.posZ, 3f, true)
+                    ent.customNameTag = "Electrically-detonated Creeper"
+                    ent.setDead()
+                }
+                if(ent is EntityEnderman){ ent.setFire(1) } //enderman will teleport
                 ent.hurtResistantTime = 0
                 ent.attackEntityFrom(DamageSource("Cable"), pain)
                 if(ent.isEntityAlive) {
@@ -227,9 +228,14 @@ class PlayerHarmer(val electricalLoad: org.ja13.eau.sim.ElectricalLoad, private 
             else if (distance < 3 && pain > 0.05 && ent.hurtResistantTime == 0 && ent.onGround) { //otherwise deal less punishing effects
                 ent.attackEntityFrom(DamageSource("Cable"), pain)
                 ent.hurtResistantTime = 15
-                if(ent is EntityCreeper && pain > 1){ location.world().createExplosion(ent,ent.posX,ent.posY+0.3,ent.posZ,1f,true); ent.setDead() }
+                if(ent is EntityCreeper){
+                    location.world().createExplosion(ent, ent.posX, ent.posY, ent.posZ, 3f, true)
+                    ent.customNameTag = "Electrically-detonated Creeper"
+                    ent.setDead()
+                }
+                if(ent is EntityEnderman){ ent.setFire(1) } //enderman will teleport
                 if(ent.isEntityAlive){
-                    ent.setVelocity(0.0,Math.min(pain/2.0,0.65),0.0) //makes the zapped entity jump straight up based on pain, within limit
+                    ent.setVelocity(0.0,Math.min(pain/2.0,0.65),0.0) //Electricity makes you jump
                 }
             }
         }
