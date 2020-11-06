@@ -986,13 +986,17 @@ object Utils {
         return Item.getIdFromItem(Item.getItemFromBlock(block))
     }
 
-    @Suppress("unused")
+    @JvmOverloads
+    fun addSmelting(fromStack: ItemStack?, toStack: ItemStack?, f: Float = 0.3f) {
+        if (fromStack != null && toStack != null)
+            FurnaceRecipes.smelting().func_151394_a(newItemStack(fromStack.item, 1, fromStack.itemDamage), toStack, f)
+    }
+
     @JvmOverloads
     fun addSmelting(parentItem: Item?, parentItemDamage: Int, findItemStack: ItemStack?, f: Float = 0.3f) {
         FurnaceRecipes.smelting().func_151394_a(newItemStack(parentItem, 1, parentItemDamage), findItemStack, f)
     }
 
-    @Suppress("unused")
     @JvmOverloads
     fun addSmelting(parentBlock: Block?, parentItemDamage: Int, findItemStack: ItemStack?, f: Float = 0.3f) {
         FurnaceRecipes.smelting().func_151394_a(newItemStack(Item.getItemFromBlock(parentBlock), 1, parentItemDamage), findItemStack, f)
