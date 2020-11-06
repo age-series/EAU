@@ -710,14 +710,14 @@ class ItemRegistry {
                 name = I18N.TR_NAME(I18N.Type.NONE, "Tree Resin")
                 val element = TreeResin(name)
                 EAU.treeResin = element
-                CraftingRegistry.addToOre("materialResin", element.newItemStack())
                 registerItem(id, 0, element)
+                CraftingRegistry.addToOre("materialResin", element.newItemStack())
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.NONE, "Rubber")
                 val element = GenericItemUsingDamageDescriptor(name)
-                CraftingRegistry.addToOre("itemRubber", element.newItemStack())
                 registerItem(id, 1, element)
+                CraftingRegistry.addToOre("itemRubber", element.newItemStack())
             }
         }
 

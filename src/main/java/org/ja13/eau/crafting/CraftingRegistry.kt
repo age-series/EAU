@@ -60,9 +60,12 @@ class CraftingRegistry {
             var stack = GameRegistry.findItemStack("EAU", name, stackSize)
             if (stack == null) {
                 stack = EAU.dictionnaryOreFromMod[name]
-                if (stack != null)
+                if (stack != null) {
                     stack = Utils.newItemStack(Item.getIdFromItem(stack.item), stackSize, stack.itemDamage)
-                else return null
+                } else {
+                    Utils.println("Could not find $name")
+                    return null
+                }
             }
             return stack
         }
@@ -128,7 +131,7 @@ class CraftingRegistry {
             recipeArmor()
             recipeTool()
             recipeGround()
-            recipeElectricalCable()
+            //recipeElectricalCable()
             recipeThermalCable()
             recipeLampSocket()
             recipeLampSupply()
@@ -160,14 +163,14 @@ class CraftingRegistry {
             recipeThermalDissipatorPassiveAndActive()
             recipeElectricalAntenna()
             recipeEggIncubator()
-            recipeBatteryCharger()
-            recipeTransporter()
-            recipeWindTurbine()
-            recipeFuelGenerator()
+            //recipeBatteryCharger()
+            //recipeTransporter()
+            //recipeWindTurbine()
+            //recipeFuelGenerator()
             recipeGeneral()
-            recipeHeatingCorp()
-            recipeRegulatorItem()
-            recipeLampItem()
+            //recipeHeatingCorp()
+            //recipeRegulatorItem()
+            //recipeLampItem()
             recipeFerromagneticCore()
             recipeDust()
             recipeElectricalMotor()
@@ -1516,7 +1519,7 @@ class CraftingRegistry {
                 'i', "ingotIron",
                 'B', "blockIron",
                 'c', findItemStack("Machine Block")
-            )
+            )*/
         }
 
         private fun recipeBattery() {
@@ -1750,6 +1753,7 @@ class CraftingRegistry {
             )
         }
 
+        /*
         private fun recipeBatteryCharger() {
             addRecipe(findItemStack("Weak 50V Battery Charger", 1),
                 "RIR",
@@ -1815,13 +1819,13 @@ class CraftingRegistry {
                 'A', findItemStack("Analogic Regulator"),
                 'C', findItemStack("Medium Voltage Cable"),
                 'M', findItemStack("Advanced Electrical Motor"))
-        }
+        }*/
 
         private fun recipeGeneral() {
             Utils.addSmelting(EAU.treeResin.parentItem,
                 EAU.treeResin.parentItemDamage, findItemStack("Rubber", 1), 0f)
         }
-
+/*
         private fun recipeHeatingCorp() {
             addRecipe(findItemStack("Small 50V Copper Heating Corp"),
                 "C C",
@@ -2005,7 +2009,7 @@ class CraftingRegistry {
                 'S', findItemStack("Silicon Ingot"),
                 'C', findItemStack("Medium Voltage Cable"))
         }
-
+*/
         private fun recipeFerromagneticCore() {
             addRecipe(findItemStack("Cheap Ferromagnetic Core"),
                 listOf(
@@ -2130,7 +2134,7 @@ class CraftingRegistry {
                 findItemStack("MultiMeter"),
                 findItemStack("Thermometer")
                 )
-            )
+            )/*
             addRecipe(findItemStack("Wireless Analyser"),
                 listOf(
                 " S ",
@@ -2149,10 +2153,10 @@ class CraftingRegistry {
                 'w', findItemStack("Wrench"),
                 'R', ItemStack(.redstone),
                 'C', EAU.dictAdvancedChip
-            )
+            )*/
         }
 
-        private fun recipeElectricalDrill() {
+        private fun recipeElectricalDrill() {/*
             addRecipe(findItemStack("Cheap Electrical Drill"),
                 "CMC",
                 " T ",
@@ -2190,10 +2194,10 @@ class CraftingRegistry {
                 "DFD",
                 "DDD",
                 'F', findItemStack("Turbo Electrical Drill"),
-                'D', findItemStack("Synthetic Diamond"))
+                'D', findItemStack("Synthetic Diamond"))*/
         }
 
-        private fun recipeOreScanner() {
+        private fun recipeOreScanner() {/*
             addRecipe(findItemStack("Ore Scanner"),
                 "IGI",
                 "RCR",
@@ -2201,26 +2205,26 @@ class CraftingRegistry {
                 'C', EAU.dictCheapChip,
                 'R', ItemStack(.redstone),
                 'I', findItemStack("Iron Cable"),
-                'G', ItemStack(.gold_ingot))
+                'G', ItemStack(.gold_ingot))*/
         }
 
-        private fun recipeMiningPipe() {
+        private fun recipeMiningPipe() {/*
             addRecipe(findItemStack("Mining Pipe", 12),
                 "A",
                 "A",
-                'A', "ingotAlloy")
+                'A', "ingotAlloy")*/
         }
 
-        private fun recipeTreeResinAndRubber() {
+        private fun recipeTreeResinAndRubber() {/*
             addRecipe(findItemStack("Tree Resin Collector"),
                 "W W",
                 "WW ", 'W', "plankWood")
             addRecipe(findItemStack("Tree Resin Collector"),
                 "W W",
-                " WW", 'W', "plankWood")
+                " WW", 'W', "plankWood")*/
         }
 
-        private fun recipeRawCable() {
+        private fun recipeRawCable() {/*
             addRecipe(findItemStack("Copper Cable", 12),
                 "III",
                 'I', "ingotCopper")
@@ -2229,7 +2233,7 @@ class CraftingRegistry {
                 'I', ItemStack(.iron_ingot))
             addRecipe(findItemStack("Tungsten Cable", 6),
                 "III",
-                'I', EAU.dictTungstenIngot)
+                'I', EAU.dictTungstenIngot)*/
         }
 
         private fun recipeGraphite() {
@@ -2405,7 +2409,7 @@ class CraftingRegistry {
                 mapOf(
                     Pair('c', "Iron Cable")
                 )
-            )
+            )/*
             addRecipe(findItemStack("Player Filter"),
                 listOf(
                     " g",
@@ -2416,7 +2420,6 @@ class CraftingRegistry {
                     Pair('c', "dye", 1, 2)
                 )
             )
-            )
             addRecipe(findItemStack("Monster Filter"),
                 listOf(
                     " g",
@@ -2426,7 +2429,7 @@ class CraftingRegistry {
                     Pair('g', "glasspane"),
                     Pair('c', "dye", 1, 1)
                 )
-            )
+            )*/
             addRecipe(findItemStack("Casing", 1),
                 listOf(
                     "ppp",
@@ -2598,7 +2601,6 @@ class CraftingRegistry {
                 )
             )
         }
-        */
 
         private fun recipeFurnace() {
             var `in`: ItemStack?
