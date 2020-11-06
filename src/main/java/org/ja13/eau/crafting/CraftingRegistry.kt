@@ -160,7 +160,6 @@ class CraftingRegistry {
             recipeThermalDissipatorPassiveAndActive()
             recipeElectricalAntenna()
             recipeEggIncubator()
-            /*
             recipeBatteryCharger()
             recipeTransporter()
             recipeWindTurbine()
@@ -184,18 +183,15 @@ class CraftingRegistry {
             recipeBatteryItem()
             recipeElectricalTool()
             recipePortableCapacitor()
-            */
             recipeFurnace()
             recipeMacerator()
             recipeCompressor()
             recipePlateMachine()
             recipeMagnetizer()
-            /*
             recipeFuelBurnerItem()
             recipeDisplays()
             recipeECoal()
             recipeGridDevices()
-             */
         }
 
         private fun recipeMaceratorModOres() {
@@ -586,8 +582,7 @@ class CraftingRegistry {
                 )
             )
         }
-
-        /*
+/*
         private fun recipePassiveComponent() {
             addRecipe(findItemStack("10A Diode", 3),
                 " RB",
@@ -644,8 +639,7 @@ class CraftingRegistry {
                 'D', findItemStack("Small Passive Thermal Dissipator")
             )
         }
-         */
-
+*/
         private fun recipeSwitch() {
             addRecipe(findItemStack("Low Current Switch"),
                 listOf(
@@ -1523,7 +1517,6 @@ class CraftingRegistry {
                 'B', "blockIron",
                 'c', findItemStack("Machine Block")
             )
-             */
         }
 
         private fun recipeBattery() {
@@ -1757,7 +1750,6 @@ class CraftingRegistry {
             )
         }
 
-        /*
         private fun recipeBatteryCharger() {
             addRecipe(findItemStack("Weak 50V Battery Charger", 1),
                 "RIR",
@@ -2016,94 +2008,146 @@ class CraftingRegistry {
 
         private fun recipeFerromagneticCore() {
             addRecipe(findItemStack("Cheap Ferromagnetic Core"),
+                listOf(
                 "LLL",
                 "L  ",
-                "LLL",
-                'L', findItemStack("Iron Cable"))
+                "LLL"
+                ),
+                mapOf(
+                    Pair('L', "Iron Cable")
+                )
+            )
             addRecipe(findItemStack("Average Ferromagnetic Core"),
-                "PCP",
-                'C', findItemStack("Cheap Ferromagnetic Core"),
-                'P', "plateIron")
+                listOf(
+                    "PCP"
+                ),
+                mapOf(
+                    Pair('C', "Cheap Ferromagnetic Core"),
+                    Pair('P', "plateIron")
+                )
+            )
             addRecipe(findItemStack("Optimal Ferromagnetic Core"),
-                " P ",
-                "PCP",
-                " P ",
-                'C', findItemStack("Average Ferromagnetic Core"),
-                'P', "plateIron")
+                listOf(
+                    " P ",
+                    "PCP",
+                    " P "
+                ),
+                mapOf(
+                    Pair('C', "Average Ferromagnetic Core"),
+                    Pair('P', "plateIron")
+                )
+            )
         }
 
         private fun recipeDust() {
             addShapelessRecipe(findItemStack("Alloy Dust", 6),
-                "dustIron",
-                "dustCoal",
-                EAU.dictTungstenDust,
-                EAU.dictTungstenDust,
-                EAU.dictTungstenDust,
-                EAU.dictTungstenDust)
+                listOf(
+                    findItemStack("dustIron"),
+                    findItemStack("dustCoal"),
+                    findItemStack(EAU.dictTungstenDust),
+                    findItemStack(EAU.dictTungstenDust),
+                    findItemStack(EAU.dictTungstenDust),
+                    findItemStack(EAU.dictTungstenDust)
+                )
+            )
         }
 
         private fun recipeElectricalMotor() {
             addRecipe(findItemStack("Electrical Motor"),
-                " C ",
-                "III",
-                "C C",
-                'I', findItemStack("Iron Cable"),
-                'C', findItemStack("Low Voltage Cable"))
+                listOf(
+                    " C ",
+                    "III",
+                    "C C"
+                ),
+                mapOf(
+                    Pair('I', "Iron Cable"),
+                    Pair('C', "Low Voltage Cable")
+                )
+            )
             addRecipe(findItemStack("Advanced Electrical Motor"),
-                "RCR",
-                "MIM",
-                "CRC",
-                'M', findItemStack("Advanced Magnet"),
-                'I', ItemStack(Items.iron_ingot),
-                'R', ItemStack(Items.redstone),
-                'C', findItemStack("Medium Voltage Cable"))
+                listOf(
+                    "RCR",
+                    "MIM",
+                    "CRC"
+                ),
+                mapOf(
+                    Pair('M', "Advanced Magnet"),
+                    Pair('I', "ingotIron"),
+                    Pair('R', "redstone"),
+                    Pair('C', "Medium Voltage Cable")
+                )
+            )
         }
 
         private fun recipeSolarTracker() {
             addRecipe(findItemStack("Solar Tracker", 4),
-                "VVV",
-                "RQR",
-                "III",
-                'Q', ItemStack(Items.quartz),
-                'V', ItemStack(Blocks.glass_pane),
-                'R', ItemStack(Items.redstone),
-                'G', ItemStack(Items.gold_ingot),
-                'I', ItemStack(Items.iron_ingot))
+                listOf(
+                    "VVV",
+                    "RQR",
+                    "III"
+                ),
+                mapOf(
+                    Pair('Q', "quartz"),
+                    Pair('V', "glass_pane"),
+                    Pair('R', "redstone"),
+                    Pair('G', "gold_ingot"),
+                    Pair('I', "iron_ingot")
+                )
+            )
+
         }
 
         private fun recipeMeter() {
             addRecipe(findItemStack("MultiMeter"),
-                "RGR",
-                "RER",
-                "RCR",
-                'G', ItemStack(Blocks.glass_pane),
-                'C', findItemStack("Electrical Probe Chip"),
-                'E', ItemStack(Items.redstone),
-                'R', "itemRubber")
+                listOf(
+                    "RGR",
+                    "RER",
+                    "RCR"
+                ),
+                mapOf(
+                    Pair('G', "glass_pane"),
+                    Pair('C', "Electrical Probe Chip"),
+                    Pair('E', "redstone"),
+                    Pair('R', "itemRubber")
+                )
+            )
             addRecipe(findItemStack("Thermometer"),
-                "RGR",
-                "RER",
-                "RCR",
-                'G', ItemStack(Blocks.glass_pane),
-                'C', findItemStack("Thermal Probe Chip"),
-                'E', ItemStack(Items.redstone),
-                'R', "itemRubber")
-            addShapelessRecipe(findItemStack("AllMeter"),
+                listOf(
+                    "RGR",
+                    "RER",
+                    "RCR"
+                ),
+                mapOf(
+                    Pair('G', "glass_pane"),
+                    Pair('C', "Thermal Probe Chip"),
+                    Pair('E', "redstone"),
+                    Pair('R', "itemRubber")
+                )
+            )
+            addShapelessRecipe(
+                findItemStack("AllMeter"),
+                listOf(
                 findItemStack("MultiMeter"),
-                findItemStack("Thermometer"))
+                findItemStack("Thermometer")
+                )
+            )
             addRecipe(findItemStack("Wireless Analyser"),
+                listOf(
                 " S ",
                 "RGR",
-                "RER",
-                'G', ItemStack(Blocks.glass_pane),
+                "RER"
+                ),
+                'G', ItemStack(.glass_pane),
                 'S', findItemStack("Signal Antenna"),
-                'E', ItemStack(Items.redstone),
+                'E', ItemStack(.redstone),
                 'R', "itemRubber")
             addRecipe(findItemStack("Config Copy Tool"),
+                listOf(
                 "wR",
-                "RC",
+                "RC"
+                ),
                 'w', findItemStack("Wrench"),
-                'R', ItemStack(Items.redstone),
+                'R', ItemStack(.redstone),
                 'C', EAU.dictAdvancedChip
             )
         }
@@ -2116,15 +2160,15 @@ class CraftingRegistry {
                 'T', findItemStack("Mining Pipe"),
                 'C', EAU.dictCheapChip,
                 'M', findItemStack("Electrical Motor"),
-                'P', ItemStack(Items.iron_pickaxe))
+                'P', ItemStack(.iron_pickaxe))
             addRecipe(findItemStack("Average Electrical Drill"),
                 "RCR",
                 " D ",
                 " d ",
-                'R', Items.redstone,
+                'R', "redstone",
                 'C', EAU.dictCheapChip,
                 'D', findItemStack("Cheap Electrical Drill"),
-                'd', ItemStack(Items.diamond))
+                'd', ItemStack(.diamond))
             addRecipe(findItemStack("Fast Electrical Drill"),
                 "MCM",
                 " T ",
@@ -2132,7 +2176,7 @@ class CraftingRegistry {
                 'T', findItemStack("Mining Pipe"),
                 'C', EAU.dictAdvancedChip,
                 'M', findItemStack("Advanced Electrical Motor"),
-                'P', ItemStack(Items.diamond_pickaxe))
+                'P', ItemStack(.diamond_pickaxe))
             addRecipe(findItemStack("Turbo Electrical Drill"),
                 "RCR",
                 " F ",
@@ -2155,9 +2199,9 @@ class CraftingRegistry {
                 "RCR",
                 "IGI",
                 'C', EAU.dictCheapChip,
-                'R', ItemStack(Items.redstone),
+                'R', ItemStack(.redstone),
                 'I', findItemStack("Iron Cable"),
-                'G', ItemStack(Items.gold_ingot))
+                'G', ItemStack(.gold_ingot))
         }
 
         private fun recipeMiningPipe() {
@@ -2182,240 +2226,377 @@ class CraftingRegistry {
                 'I', "ingotCopper")
             addRecipe(findItemStack("Iron Cable", 12),
                 "III",
-                'I', ItemStack(Items.iron_ingot))
+                'I', ItemStack(.iron_ingot))
             addRecipe(findItemStack("Tungsten Cable", 6),
                 "III",
                 'I', EAU.dictTungstenIngot)
         }
 
         private fun recipeGraphite() {
-            addRecipe(findItemStack("Graphite Rod", 2),
-                "I",
-                'I', findItemStack("2x Graphite Rods"))
-            addRecipe(findItemStack("Graphite Rod", 3),
-                "I",
-                'I', findItemStack("3x Graphite Rods"))
-            addRecipe(findItemStack("Graphite Rod", 4),
-                "I",
-                'I', findItemStack("4x Graphite Rods"))
+            addShapelessRecipe(
+                findItemStack("Graphite Rod", 2),
+                listOf(
+                    findItemStack("2x Graphite Rods")
+                )
+            )
+            addShapelessRecipe(
+                findItemStack("Graphite Rod", 3),
+                listOf(
+                    findItemStack("3x Graphite Rods")
+                )
+            )
+            addShapelessRecipe(
+                findItemStack("Graphite Rod", 4),
+                listOf(
+                    findItemStack("4x Graphite Rods")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("2x Graphite Rods"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"))
+                listOf(
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("3x Graphite Rods"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"))
+                listOf(
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("3x Graphite Rods"),
-                findItemStack("Graphite Rod"),
-                findItemStack("2x Graphite Rods"))
+                listOf(
+                    findItemStack("Graphite Rod"),
+                    findItemStack("2x Graphite Rods")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("4x Graphite Rods"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"))
+                listOf(
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("4x Graphite Rods"),
-                findItemStack("2x Graphite Rods"),
-                findItemStack("Graphite Rod"),
-                findItemStack("Graphite Rod"))
+                listOf(
+                    findItemStack("2x Graphite Rods"),
+                    findItemStack("Graphite Rod"),
+                    findItemStack("Graphite Rod")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("4x Graphite Rods"),
-                findItemStack("2x Graphite Rods"),
-                findItemStack("2x Graphite Rods"))
+                listOf(
+                    findItemStack("2x Graphite Rods"),
+                    findItemStack("2x Graphite Rods")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("4x Graphite Rods"),
-                findItemStack("3x Graphite Rods"),
-                findItemStack("Graphite Rod"))
+                listOf(
+                    findItemStack("3x Graphite Rods"),
+                    findItemStack("Graphite Rod")
+                )
+            )
             addShapelessRecipe(
-                ItemStack(Items.diamond, 2),
-                findItemStack("Synthetic Diamond"))
+                findItemStack("diamond", 2),
+                listOf(
+                    findItemStack("Synthetic Diamond")
+                )
+            )
         }
 
         private fun recipeMiscItem() {
             addRecipe(findItemStack("Cheap Chip"),
-                " R ",
-                "RSR",
-                " R ",
-                'S', "ingotSilicon",
-                'R', ItemStack(Items.redstone))
+                listOf(
+                    " R ",
+                    "RSR",
+                    " R "),
+                mapOf(
+                    Pair('S', "ingotSilicon"),
+                    Pair('R', "redstone")
+                )
+            )
             addRecipe(findItemStack("Advanced Chip"),
-                "LRL",
-                "RCR",
-                "LRL",
-                'C', EAU.dictCheapChip,
-                'L', "ingotSilicon",
-                'R', ItemStack(Items.redstone))
+                listOf(
+                    "LRL",
+                    "RCR",
+                    "LRL"),
+                mapOf(
+                    Pair('C', EAU.dictCheapChip),
+                    Pair('L', "ingotSilicon"),
+                    Pair('R', "redstone")
+                )
+            )
             addRecipe(findItemStack("Machine Block"),
-                "rLr",
-                "LcL",
-                "rLr",
-                'L', findItemStack("Iron Cable"),
-                'c', findItemStack("Copper Cable"),
-                'r', findItemStack("Tree Resin")
+                listOf(
+                    "rLr",
+                    "LcL",
+                    "rLr"),
+                mapOf(
+                    Pair('L', "Iron Cable"),
+                    Pair('c', "Copper Cable"),
+                    Pair('r', "Tree Resin")
+                )
             )
             addRecipe(findItemStack("Advanced Machine Block"),
-                "rCr",
-                "CcC",
-                "rCr",
-                'C', "plateAlloy",
-                'r', findItemStack("Tree Resin"),
-                'c', findItemStack("Copper Cable"))
+                listOf(
+                    "rCr",
+                    "CcC",
+                    "rCr"),
+                mapOf(
+                    Pair('C', "plateAlloy"),
+                    Pair('r', "Tree Resin"),
+                    Pair('c', "Copper Cable")
+                )
+            )
             addRecipe(findItemStack("Electrical Probe Chip"),
-                " R ",
-                "RCR",
-                " R ",
-                'C', findItemStack("High Voltage Cable"),
-                'R', ItemStack(Items.redstone))
+                listOf(
+                    " R ",
+                    "RCR",
+                    " R "),
+                mapOf(
+                    Pair('C', "High Voltage Cable"),
+                    Pair('R', "redstone")
+                )
+            )
             addRecipe(findItemStack("Thermal Probe Chip"),
-                " C ",
-                "RIR",
-                " C ",
-                'G', ItemStack(Items.gold_ingot),
-                'I', findItemStack("Iron Cable"),
-                'C', "ingotCopper",
-                'R', ItemStack(Items.redstone))
+                listOf(
+                    " C ",
+                    "RIR",
+                    " C "),
+                mapOf(
+                    Pair('G', "goldIngot"),
+                    Pair('I', "Iron Cable"),
+                    Pair('C', "ingotCopper"),
+                    Pair('R', "redstone")
+                )
+            )
             addRecipe(findItemStack("Signal Antenna"),
-                "c",
-                "c",
-                'c', findItemStack("Iron Cable"))
+                listOf(
+                    "c",
+                    "c"
+                ),
+                mapOf(
+                    Pair('c',"Iron Cable")
+                )
+            )
             addRecipe(findItemStack("Machine Booster"),
-                "m",
-                "c",
-                "m",
-                'm', findItemStack("Electrical Motor"),
-                'c', EAU.dictAdvancedChip)
+                listOf(
+                    "m",
+                    "c",
+                    "m"),
+                mapOf(
+                    Pair('m', "Electrical Motor"),
+                    Pair('c', EAU.dictAdvancedChip)
+                )
+            )
             addRecipe(findItemStack("Wrench"),
-                " c ",
-                "cc ",
-                "  c",
-                'c', findItemStack("Iron Cable"))
+                listOf(
+                    " c ",
+                    "cc ",
+                    "  c"),
+                mapOf(
+                    Pair('c', "Iron Cable")
+                )
+            )
             addRecipe(findItemStack("Player Filter"),
-                " g",
-                "gc",
-                " g",
-                'g', ItemStack(Blocks.glass_pane),
-                'c', ItemStack(Items.dye, 1, 2))
+                listOf(
+                    " g",
+                    "gc",
+                    " g"),
+                mapOf(
+                    Pair('g', "glasspane"),
+                    Pair('c', "dye", 1, 2)
+                )
+            )
+            )
             addRecipe(findItemStack("Monster Filter"),
-                " g",
-                "gc",
-                " g",
-                'g', ItemStack(Blocks.glass_pane),
-                'c', ItemStack(Items.dye, 1, 1))
+                listOf(
+                    " g",
+                    "gc",
+                    " g"),
+                mapOf(
+                    Pair('g', "glasspane"),
+                    Pair('c', "dye", 1, 1)
+                )
+            )
             addRecipe(findItemStack("Casing", 1),
-                "ppp",
-                "p p",
-                "ppp",
-                'p', findItemStack("Iron Cable"))
+                listOf(
+                    "ppp",
+                    "p p",
+                    "ppp"),
+                mapOf(
+                    Pair('p', "Iron Cable")
+                )
+            )
             addRecipe(findItemStack("Iron Clutch Plate"),
-                " t ",
-                "tIt",
-                " t ",
-                'I', "plateIron",
-                't', EAU.dictTungstenDust
+                listOf(
+                    " t ",
+                    "tIt",
+                    " t "),
+                mapOf(
+                    Pair('I', "plateIron"),
+                    Pair('t', EAU.dictTungstenDust)
+                )
             )
             addRecipe(findItemStack("Gold Clutch Plate"),
-                " t ",
-                "tGt",
-                " t ",
-                'G', "plateGold",
-                't', EAU.dictTungstenDust
+                listOf(
+                    " t ",
+                    "tGt",
+                    " t "),
+                mapOf(
+                    Pair('G', "plateGold"),
+                    Pair('t', EAU.dictTungstenDust)
+                )
             )
             addRecipe(findItemStack("Copper Clutch Plate"),
-                " t ",
-                "tCt",
-                " t ",
-                'C', "plateCopper",
-                't', EAU.dictTungstenDust
+                listOf(
+                    " t ",
+                    "tCt",
+                    " t "),
+                mapOf(
+                    Pair('C', "plateCopper"),
+                    Pair('t', EAU.dictTungstenDust)
+                )
             )
             addRecipe(findItemStack("Lead Clutch Plate"),
-                " t ",
-                "tLt",
-                " t ",
-                'L', "plateLead",
-                't', EAU.dictTungstenDust
+                listOf(
+                    " t ",
+                    "tLt",
+                    " t "),
+                mapOf(
+                    Pair('L', "plateLead"),
+                    Pair('t', EAU.dictTungstenDust)
+                )
             )
             addRecipe(findItemStack("Coal Clutch Plate"),
-                " t ",
-                "tCt",
-                " t ",
-                'C', "plateCoal",
-                't', EAU.dictTungstenDust
+                listOf(
+                    " t ",
+                    "tCt",
+                    " t "
+                ),
+                mapOf(
+                    Pair('C', "plateCoal"),
+                    Pair('t', EAU.dictTungstenDust)
+                )
             )
             addRecipe(findItemStack("Clutch Pin", 4),
-                "s",
-                "s",
-                's', firstExistingOre(listOf("ingotSteel", "ingotAlloy"))
+                listOf(
+                    "s",
+                    "s"
+                ),
+                mapOf(
+                    Pair('s',firstExistingOre(listOf("ingotSteel", "ingotAlloy"))
+                    )
+                )
             )
         }
 
         private fun recipeBatteryItem() {
             addRecipe(findItemStack("Portable Battery"),
-                " I ",
-                "IPI",
-                "IPI",
-                'P', "ingotLead",
-                'I', ItemStack(Items.iron_ingot))
+                listOf(
+                    " I ",
+                    "IPI",
+                    "IPI"),
+                mapOf(
+                    Pair('P', "ingotLead"),
+                    Pair('I', "ingotiron")
+                )
+            )
             addShapelessRecipe(
                 findItemStack("Portable Battery Pack"),
-                findItemStack("Portable Battery"),
-                findItemStack("Portable Battery"),
-                findItemStack("Portable Battery"),
-                findItemStack("Portable Battery"))
+                listOf(
+                    findItemStack("Portable Battery"),
+                    findItemStack("Portable Battery"),
+                    findItemStack("Portable Battery"),
+                    findItemStack("Portable Battery")
+                )
+            )
         }
 
         private fun recipeElectricalTool() {
             addRecipe(findItemStack("Small Flashlight"),
-                "GLG",
-                "IBI",
-                " I ",
-                'L', findItemStack("50V Incandescent Light Bulb"),
-                'B', findItemStack("Portable Battery"),
-                'G', ItemStack(Blocks.glass_pane),
-                'I', ItemStack(Items.iron_ingot))
+                listOf(
+                    "GLG",
+                    "IBI",
+                    " I "),
+                mapOf(
+                    Pair('L', "50V Incandescent Light Bulb"),
+                    Pair('B', "Portable Battery"),
+                    Pair('G', "glasspane"),
+                    Pair('I', "ironingot")
+                )
+            )
             addRecipe(findItemStack("Portable Electrical Mining Drill"),
-                " T ",
-                "IBI",
-                " I ",
-                'T', findItemStack("Average Electrical Drill"),
-                'B', findItemStack("Portable Battery"),
-                'I', ItemStack(Items.iron_ingot))
+                listOf(
+                    " T ",
+                    "IBI",
+                    " I "),
+                mapOf(
+                    Pair('T', "Average Electrical Drill"),
+                    Pair('B', "Portable Battery"),
+                    Pair('I', "ironingot")
+                )
+            )
             addRecipe(findItemStack("Portable Electrical Axe"),
-                " T ",
-                "IMI",
-                "IBI",
-                'T', ItemStack(Items.iron_axe),
-                'B', findItemStack("Portable Battery"),
-                'M', findItemStack("Electrical Motor"),
-                'I', ItemStack(Items.iron_ingot))
+                listOf(
+                    " T ",
+                    "IMI",
+                    "IBI"
+                ),
+                mapOf(
+                    Pair('T', "ironAxe"),
+                    Pair('B', "Portable Battery"),
+                    Pair('M', "Electrical Motor"),
+                    Pair('I', "ironIngot")
+                )
+            )
             if (EAU.xRayScannerCanBeCrafted) {
                 addRecipe(findItemStack("X-Ray Scanner"),
-                    "PGP",
-                    "PCP",
-                    "PBP",
-                    'C', EAU.dictAdvancedChip,
-                    'B', findItemStack("Portable Battery"),
-                    'P', findItemStack("Iron Cable"),
-                    'G', findItemStack("Ore Scanner"))
+                    listOf(
+                        "PGP",
+                        "PCP",
+                        "PBP"
+                    ),
+                    mapOf(
+                        Pair('C', EAU.dictAdvancedChip),
+                        Pair('B', "Portable Battery"),
+                        Pair('P', "Iron Cable"),
+                        Pair('G', "Ore Scanner")
+                    )
+                )
             }
         }
 
         private fun recipePortableCapacitor() {
             addRecipe(findItemStack("Portable Condensator"),
-                " r ",
-                "cDc",
-                " r ",
-                'r', ItemStack(Items.redstone),
-                'c', findItemStack("Iron Cable"),
-                'D', findItemStack("Dielectric"))
+                listOf(
+                    " r ",
+                    "cDc",
+                    " r "),
+                mapOf(
+                    Pair('r', "redstone"),
+                    Pair('c', "Iron Cable"),
+                    Pair('D', "Dielectric")
+                )
+            )
+
+
             addShapelessRecipe(findItemStack("Portable Condensator Pack"),
-                findItemStack("Portable Condensator"),
-                findItemStack("Portable Condensator"),
-                findItemStack("Portable Condensator"),
-                findItemStack("Portable Condensator"))
+                listOf(
+                    findItemStack("Portable Condensator"),
+                    findItemStack("Portable Condensator"),
+                    findItemStack("Portable Condensator"),
+                    findItemStack("Portable Condensator")
+                )
+            )
         }
         */
 
@@ -2525,70 +2706,115 @@ class CraftingRegistry {
             EAU.magnetiserRecipes.addRecipe(Recipe(findItemStack("Inert Canister", 1), arrayOf(ItemStack(Items.ender_pearl)), 150000.0))
         }
 
-        /*
         private fun recipeFuelBurnerItem() {
             addRecipe(findItemStack("Small Fuel Burner"),
-                "   ",
-                " Cc",
-                "   ",
-                'C', findItemStack("Combustion Chamber"),
-                'c', findItemStack("Copper Thermal Cable"))
+                listOf(
+                    "   ",
+                    " Cc",
+                    "   "
+                ),
+                mapOf(
+                    Pair('C', "Combustion Chamber"),
+                    Pair('c', "Copper Thermal Cable")
+                )
+            )
             addRecipe(findItemStack("Medium Fuel Burner"),
-                "   ",
-                " Cc",
-                " C ",
-                'C', findItemStack("Combustion Chamber"),
-                'c', findItemStack("Copper Thermal Cable"))
+                listOf(
+                    "   ",
+                    " Cc",
+                    " C "
+                ),
+                mapOf(
+                    Pair('C', "Combustion Chamber"),
+                    Pair('c', "Copper Thermal Cable")
+                )
+            )
             addRecipe(findItemStack("Big Fuel Burner"),
-                "   ",
-                "CCc",
-                "CC ",
-                'C', findItemStack("Combustion Chamber"),
-                'c', findItemStack("Copper Thermal Cable"))
+                listOf(
+                    "   ",
+                    "CCc",
+                    "CC "
+                ),
+                mapOf(
+                    Pair('C', "Combustion Chamber"),
+                    Pair('c', "Copper Thermal Cable")
+                )
+            )
         }
 
         private fun recipeDisplays() {
             addRecipe(findItemStack("Digital Display", 1),
-                "   ",
-                "rrr",
-                "iii",
-                'r', ItemStack(Items.redstone),
-                'i', findItemStack("Iron Cable")
+                listOf(
+                    "   ",
+                    "rrr",
+                    "iii"
+                ),
+                mapOf(
+                    Pair('r', "redstone"),
+                    Pair('i', "Iron Cable")
+                )
             )
             addRecipe(findItemStack("Nixie Tube", 1),
-                " g ",
-                "grg",
-                "iii",
-                'g', ItemStack(Blocks.glass_pane),
-                'r', ItemStack(Items.redstone),
-                'i', findItemStack("Iron Cable")
+                listOf(
+                    " g ",
+                    "grg",
+                    "iii"
+                ),
+                mapOf(
+                    Pair('g', "Glass Pane"),
+                    Pair('r', "redstone"),
+                    Pair('i', "Iron Cable")
+                )
             )
         }
 
         private fun recipeECoal() {
             addRecipe(findItemStack("E-Coal Helmet"),
-                "PPP",
-                "PCP",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
+                listOf(
+                    "PPP",
+                    "PCP"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
+
             addRecipe(findItemStack("E-Coal Boots"),
-                " C ",
-                "P P",
-                "P P",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
+                listOf(
+                    " C ",
+                    "P P",
+                    "P P"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
+
             addRecipe(findItemStack("E-Coal Chestplate"),
-                "P P",
-                "PCP",
-                "PPP",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
+                listOf(
+                    "P P",
+                    "PCP",
+                    "PPP"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
+
             addRecipe(findItemStack("E-Coal Leggings"),
-                "PPP",
-                "PCP",
-                "P P",
-                'P', "plateCoal",
-                'C', findItemStack("Portable Condensator"))
+                listOf(
+                    "PPP",
+                    "PCP",
+                    "P P"
+                ),
+                mapOf(
+                    Pair('P', "plateCoal"),
+                    Pair('C', "Portable Condensator")
+                )
+            )
         }
 
         private fun recipeGridDevices() {
@@ -2599,11 +2825,15 @@ class CraftingRegistry {
                 "ingotSteel")) {
                 if (EAU.oreNames.contains(oreName)) {
                     addRecipe(findItemStack("Utility Pole"),
-                        "WWW",
-                        "IWI",
-                        " W ",
-                        'W', "logWood",
-                        'I', oreName
+                        listOf(
+                            "WWW",
+                            "IWI",
+                            " W "
+                        ),
+                        mapOf(
+                            Pair('W', "logWood"),
+                            Pair('I', "oreName")
+                        )
                     )
                     poleRecipes++
                 }
@@ -2611,21 +2841,29 @@ class CraftingRegistry {
             if (poleRecipes == 0) {
                 // Really?
                 addRecipe(findItemStack("Utility Pole"),
-                    "WWW",
-                    "IWI",
-                    " W ",
-                    'I', "ingotIron",
-                    'W', "logWood"
+                    listOf(
+                        "WWW",
+                        "IWI",
+                        " W "
+                    ),
+                    mapOf(
+                        Pair('I', "ingotIron"),
+                        Pair('W', "logWood")
+                    )
                 )
             }
             addRecipe(findItemStack("Utility Pole w/DC-DC Converter"),
-                "HHH",
-                " TC",
-                " PH",
-                'P', findItemStack("Utility Pole"),
-                'H', findItemStack("High Voltage Cable"),
-                'C', findItemStack("Optimal Ferromagnetic Core"),
-                'T', findItemStack("DC-DC Converter")
+                listOf(
+                    "HHH",
+                    " TC",
+                    " PH"
+                ),
+                mapOf(
+                    Pair('P', "Utility Pole"),
+                    Pair('H', "High Voltage Cable"),
+                    Pair('C', "Optimal Ferromagnetic Core"),
+                    Pair('T', "DC-DC Converter")
+                )
             )
 
             // I don't care what you think, if your modpack lacks steel then you don't *need* this much power.
@@ -2640,21 +2878,30 @@ class CraftingRegistry {
                 val ingotType = "ingot$type"
                 if (EAU.oreNames.contains(blockType)) {
                     addRecipe(findItemStack("Transmission Tower"),
-                        "ii ",
-                        "mi ",
-                        " B ",
-                        Character.valueOf('i'), ingotType,
-                        Character.valueOf('B'), blockType,
-                        Character.valueOf('m'), findItemStack("Machine Block"))
+                        listOf(
+                            "ii ",
+                            "mi ",
+                            " B "
+                        ),
+                        mapOf(
+                            Pair('i',ingotType),
+                            Pair('B',blockType),
+                            Pair('m', "Machine Block")
+                        )
+                    )
                     addRecipe(findItemStack("Grid DC-DC Converter"),
-                        "i i",
-                        "mtm",
-                        "imi",
-                        Character.valueOf('i'), ingotType,
-                        Character.valueOf('t'), findItemStack("DC-DC Converter"),
-                        Character.valueOf('m'), findItemStack("Advanced Machine Block"))
+                        listOf(
+                            "i i",
+                            "mtm",
+                            "imi"
+                        ),
+                        mapOf(
+                            Pair('i',ingotType),
+                            Pair('t',"DC-DC Converter"),
+                            Pair('m',"Advanced Machine Block"))
+                    )
                 }
             }
-        }*/
+        }
     }
 }
