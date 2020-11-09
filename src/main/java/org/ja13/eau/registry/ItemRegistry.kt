@@ -128,27 +128,29 @@ class ItemRegistry {
 
         private fun registerArmor() {
             var name: String
+            val copperMaterial = EnumHelper.addArmorMaterial("Copper", 10, intArrayOf(1, 3, 2, 1), 15)
+            copperMaterial.customCraftingMaterial = EAU.copperIngot.newItemStack().item
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Helmet")
-                EAU.helmetCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Helmet, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.helmetCopper = genericArmorItem(copperMaterial, 2, ArmourType.Helmet, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_helmet").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.helmetCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.helmetCopper))
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Chestplate")
-                EAU.plateCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Chestplate, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.plateCopper = genericArmorItem(copperMaterial, 2, ArmourType.Chestplate, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_chestplate").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.plateCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.plateCopper))
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Leggings")
-                EAU.legsCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Leggings, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.legsCopper = genericArmorItem(copperMaterial, 2, ArmourType.Leggings, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_leggings").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.legsCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.legsCopper))
             }
             run {
                 name = I18N.TR_NAME(I18N.Type.ITEM, "Copper Boots")
-                EAU.bootsCopper = genericArmorItem(ArmorMaterial.IRON, 2, ArmourType.Boots, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_boots").setCreativeTab(EAU.itemTab) as ItemArmor
+                EAU.bootsCopper = genericArmorItem(copperMaterial, 2, ArmourType.Boots, "eau:textures/armor/copper_layer_1.png", "eau:textures/armor/copper_layer_2.png").setUnlocalizedName(name).setTextureName("eau:copper_boots").setCreativeTab(EAU.itemTab) as ItemArmor
                 GameRegistry.registerItem(EAU.bootsCopper, "Eln.$name")
                 GameRegistry.registerCustomItemStack(name, ItemStack(EAU.bootsCopper))
             }
