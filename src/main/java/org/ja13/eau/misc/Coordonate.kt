@@ -9,7 +9,6 @@ import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.Vec3
 import net.minecraft.world.World
 import net.minecraftforge.common.DimensionManager
-import org.lwjgl.util.vector.Vector3f
 import javax.vecmath.Vector3d
 
 class Coordonate : INBTTReady {
